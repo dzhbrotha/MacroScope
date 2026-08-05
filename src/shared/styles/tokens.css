@@ -7,14 +7,15 @@
   color-scheme: dark;
 
   /* colors */
-  --color-bg: #0a0a12;
-  --color-surface: #10101c;
-  --color-text: #f2f3f8;
-  --color-text-muted: #8b90a5;
-  --color-border: #20243a;
-  --color-accent: #4d7cff;
-  --color-accent-hover: #6b93ff;
-  --color-error: #ff5c5c;
+  --color-bg: #06152a;
+  --color-surface: #0b213e;
+  --color-text: #f5f8ff;
+  --color-text-muted: #9bb0ca;
+  --color-border: #244363;
+  --color-accent: #5b8cff;
+  --color-accent-hover: #82a8ff;
+  --color-error: #ff7180;
+  --color-cyan: #7ed8e8;
 
   /* typography */
   --font-heading: 'Space Grotesk Variable', sans-serif;

@@ -55,8 +55,13 @@ export async function getIndicatorForCountries(
   countryCodes: string[],
   indicatorCode: string,
 ): Promise<Record<string, IndicatorPoint[]>> {
-  const results = await Promise.all(
-    countryCodes.map((code) => getIndicator(code, indicatorCode)),
-  )
+  const results = await Promise.all(countryCodes.map(async (code) => {
+    try {
+      return await getIndicator(code, indicatorCode)
+    } catch (error) {
+      console.warn(`Indicator unavailable for ${code}/${indicatorCode}:`, error)
+      return []
+    }
+  }))
   return Object.fromEntries(countryCodes.map((code, index) => [code, results[index]]))
 }

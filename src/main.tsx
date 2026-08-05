@@ -2,6 +2,7 @@ import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
+import { Aurora } from './shared/components'
 import { AuthProvider } from './app/auth/AuthProvider'
 import './index.css'
 
@@ -22,6 +23,7 @@ const pageFallback = (
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <Aurora />
     <AuthProvider>
       <Suspense fallback={pageFallback}>
         <RouterProvider router={router} />

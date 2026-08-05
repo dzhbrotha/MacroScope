@@ -6,14 +6,7 @@
   justify-content: center;
   gap: var(--space-5);
   padding: var(--space-5);
-  background-image:
-    radial-gradient(1px 1px at 32px 44px, rgba(255, 255, 255, 0.45) 50%, transparent 50%),
-    radial-gradient(1px 1px at 118px 142px, rgba(255, 255, 255, 0.28) 50%, transparent 50%),
-    radial-gradient(1.5px 1.5px at 212px 62px, rgba(255, 255, 255, 0.38) 50%, transparent 50%),
-    radial-gradient(1px 1px at 78px 224px, rgba(255, 255, 255, 0.24) 50%, transparent 50%),
-    radial-gradient(1.5px 1.5px at 262px 184px, rgba(255, 255, 255, 0.32) 50%, transparent 50%),
-    radial-gradient(1px 1px at 172px 254px, rgba(255, 255, 255, 0.2) 50%, transparent 50%);
-  background-size: 320px 320px;
+  background: var(--color-bg);
 }
 
 .wordmark {
@@ -29,7 +22,7 @@
   width: 100%;
   max-width: 400px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: var(--space-6);
   background: var(--color-surface);
 }

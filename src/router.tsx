@@ -12,6 +12,7 @@ const InflationPage = lazy(() => import('./app/modules/inflation/InflationPage')
 const UnemploymentPage = lazy(() => import('./app/modules/unemployment/UnemploymentPage'))
 const QualityOfLifePage = lazy(() => import('./app/modules/quality/QualityOfLifePage'))
 const AiExplainerPage = lazy(() => import('./app/modules/ai/AiExplainerPage'))
+const PropertyLabPage = lazy(() => import('./app/modules/property/PropertyLabPage'))
 const NotFound = lazy(() => import('./shared/components/NotFound'))
 
 export const router = createBrowserRouter([
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
       { path: 'unemployment', element: <UnemploymentPage /> },
       { path: 'quality-of-life', element: <QualityOfLifePage /> },
       { path: 'ai-explainer', element: <AiExplainerPage /> },
+      { path: 'property-lab', element: <PropertyLabPage /> },
     ],
   },
   { path: '*', element: <NotFound /> },

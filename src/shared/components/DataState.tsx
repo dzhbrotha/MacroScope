@@ -1,4 +1,5 @@
 import { Loader2, AlertTriangle, Inbox } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import Button from './Button'
 import styles from './DataState.module.css'
 
@@ -25,10 +26,10 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
   )
 }
 
-export function EmptyState({ message = 'No data available' }: { message?: string }) {
+export function EmptyState({ message = 'No data available', icon: Icon = Inbox }: { message?: string; icon?: LucideIcon }) {
   return (
     <div className={styles.state}>
-      <Inbox size={20} strokeWidth={1.75} className={styles.emptyIcon} />
+      <Icon size={20} strokeWidth={1.75} className={styles.emptyIcon} />
       <p className={styles.text}>{message}</p>
     </div>
   )

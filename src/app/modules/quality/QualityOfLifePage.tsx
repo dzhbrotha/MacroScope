@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Globe2 } from 'lucide-react'
 import {
   Card,
   EmptyState,
@@ -10,8 +11,8 @@ import {
 import type { TableColumn } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
 import { getIndicatorForCountries } from '../../../backend/indicators'
-import { COUNTRIES, INDICATORS } from '../../../backend/constants'
-import type { IndicatorPoint } from '../../../backend/worldbank'
+import { INDICATORS } from '../../../backend/constants'
+import { fetchWorldBankCountries, type IndicatorPoint } from '../../../backend/worldbank'
 import { computeScores, WEIGHTS } from './index'
 import type { CountryMetrics, ScoredCountry } from './index'
 import styles from './QualityOfLifePage.module.css'
@@ -22,12 +23,13 @@ function latestOf(points: IndicatorPoint[] | undefined): number | null {
 }
 
 async function loadMetrics(): Promise<CountryMetrics[]> {
-  const codes = COUNTRIES.map((country) => country.code)
+  const countries = await fetchWorldBankCountries()
+  const codes = countries.map((country) => country.code)
   const gdp = await getIndicatorForCountries(codes, INDICATORS.gdpPerCapita)
   const life = await getIndicatorForCountries(codes, INDICATORS.lifeExpectancy)
   const inflation = await getIndicatorForCountries(codes, INDICATORS.inflation)
   const unemployment = await getIndicatorForCountries(codes, INDICATORS.unemployment)
-  return COUNTRIES.map((country) => ({
+  return countries.map((country) => ({
     code: country.code,
     name: country.name,
     gdpPerCapita: latestOf(gdp[country.code]),
@@ -106,7 +108,7 @@ export default function QualityOfLifePage() {
       ) : error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !result || result.scored.length === 0 ? (
-        <EmptyState message="Not enough data to build the index" />
+        <EmptyState icon={Globe2} message="Not enough country data to build the index" />
       ) : (
         <>
           <Card title={`Ranking, ${result.scored.length} countries`}>

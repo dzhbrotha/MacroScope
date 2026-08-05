@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Scale, TrendingUp, Briefcase, Gauge, Brain, ArrowRight } from 'lucide-react'
+import { Scale, TrendingUp, Briefcase, Gauge, Brain, House, ArrowRight } from 'lucide-react'
 import { PageLayout } from '../shared/components'
 import styles from './DashboardPage.module.css'
 
@@ -33,6 +33,12 @@ const modules = [
     icon: Brain,
     title: 'AI Crisis Explainer',
     text: 'AI explains economic crises in plain language.',
+  },
+  {
+    to: '/app/property-lab',
+    icon: House,
+    title: 'Property Lab',
+    text: 'Connect rates, rents and unexpected events to a property decision.',
   },
 ]
 

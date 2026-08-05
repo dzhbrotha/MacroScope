@@ -7,7 +7,25 @@ export interface IndicatorPoint {
   value: number | null
 }
 
+export interface WorldBankCountry {
+  code: string
+  name: string
+}
+
 const API_BASE = 'https://api.worldbank.org/v2'
+
+let countriesPromise: Promise<WorldBankCountry[]> | null = null
+
+export function fetchWorldBankCountries(): Promise<WorldBankCountry[]> {
+  if (countriesPromise) return countriesPromise
+  countriesPromise = fetch(`${API_BASE}/country?format=json&per_page=400`)
+    .then(async (response) => {
+      if (!response.ok) throw new Error(`World Bank country list error: ${response.status}`)
+      const payload = (await response.json()) as [unknown, Array<{ id: string; name: string; region?: { id: string } }>]
+      return (payload[1] ?? []).filter((country) => country.id && country.id !== 'NA' && country.region?.id !== 'NA').map((country) => ({ code: country.id, name: country.name }))
+    })
+  return countriesPromise
+}
 
 interface WorldBankRow {
   date: string

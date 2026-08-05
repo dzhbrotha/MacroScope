@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import styles from './AuthLayout.module.css'
+import { Logo } from '../../shared/components'
 
 interface AuthLayoutProps {
   title: string
@@ -11,9 +11,7 @@ interface AuthLayoutProps {
 export default function AuthLayout({ title, children, footer }: AuthLayoutProps) {
   return (
     <div className={styles.page}>
-      <Link to="/" className={styles.wordmark}>
-        MacroScope
-      </Link>
+      <Logo />
       <div className={styles.card}>
         <h1 className={styles.title}>{title}</h1>
         {children}
