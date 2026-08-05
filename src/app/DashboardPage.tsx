@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Scale, TrendingUp, Briefcase, Gauge, Brain, House, ArrowRight } from 'lucide-react'
+import { Scale, TrendingUp, Briefcase, Gauge, Brain, House, Globe, ArrowRight } from 'lucide-react'
 import { PageLayout } from '../shared/components'
 import styles from './DashboardPage.module.css'
 
@@ -27,6 +27,12 @@ const modules = [
     icon: Gauge,
     title: 'Quality of Life Index',
     text: 'A composite index with a ranking table and country pages.',
+  },
+  {
+    to: '/app/country',
+    icon: Globe,
+    title: 'Country Profile',
+    text: 'All the key indicators for a single country in one view.',
   },
   {
     to: '/app/ai-explainer',
