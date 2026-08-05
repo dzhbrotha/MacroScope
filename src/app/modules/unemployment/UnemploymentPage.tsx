@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { usePersistentState } from '../../../shared/hooks/usePersistentState'
 import {
   Card,
   EmptyState,
@@ -24,7 +24,10 @@ function factsOf(points: IndicatorPoint[] | undefined) {
 }
 
 export default function UnemploymentPage() {
-  const [selected, setSelected] = useState<string[]>(DEFAULT_SELECTED)
+  const [selected, setSelected] = usePersistentState<string[]>(
+    'macroscope.unemployment.countries',
+    DEFAULT_SELECTED,
+  )
 
   const { data, loading, error, reload } = useAsyncData(
     () => getIndicatorForCountries(selected, INDICATORS.unemployment),

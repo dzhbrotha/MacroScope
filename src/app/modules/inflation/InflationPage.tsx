@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { usePersistentState } from '../../../shared/hooks/usePersistentState'
 import {
   Button,
   Card,
@@ -25,8 +26,8 @@ const MODELS: { key: ForecastModel; label: string }[] = [
 ]
 
 export default function InflationPage() {
-  const [countryCode, setCountryCode] = useState('KAZ')
-  const [model, setModel] = useState<ForecastModel>('linear')
+  const [countryCode, setCountryCode] = usePersistentState('macroscope.inflation.country', 'KAZ')
+  const [model, setModel] = usePersistentState<ForecastModel>('macroscope.inflation.model', 'linear')
 
   const { data, loading, error, reload } = useAsyncData(
     () => getIndicator(countryCode, INDICATORS.inflation),

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
+import { usePersistentState } from '../../../shared/hooks/usePersistentState'
 import {
   Button,
   Card,
@@ -37,8 +38,8 @@ function formatValue(value: number | null, unit: string): string {
 }
 
 export default function SanctionsPage() {
-  const [country, setCountry] = useState('RUS')
-  const [selectedYear, setSelectedYear] = useState(SANCTION_EVENTS.RUS[0].year)
+  const [country, setCountry] = usePersistentState('macroscope.sanctions.country', 'RUS')
+  const [selectedYear, setSelectedYear] = useState(() => SANCTION_EVENTS[country][0].year)
   const events = SANCTION_EVENTS[country]
 
   const { data, loading, error, reload } = useAsyncData(
