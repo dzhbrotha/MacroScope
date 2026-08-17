@@ -1,33 +1,44 @@
-import { useMemo } from 'react'
-import { usePersistentState } from '../../../shared/hooks/usePersistentState'
+import { useMemo, useRef } from 'react'
 import {
   Button,
   Card,
+  CountrySelect,
   EmptyState,
   ErrorState,
+  ExportBar,
+  InsightList,
   LoadingState,
   PageLayout,
-  Select,
   StatCard,
+  Tooltip,
 } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
+import { useQueryState } from '../../../shared/hooks/useQueryState'
 import { getIndicator } from '../../../backend/indicators'
-import { COUNTRIES, INDICATORS, countryName } from '../../../backend/constants'
+import { INDICATORS } from '../../../backend/constants'
+import { useCountries } from '../../../backend/CountriesProvider'
 import { buildForecastSeries, FORECAST_HORIZON } from './forecast'
 import type { ForecastModel } from './forecast'
 import ForecastChart from './ForecastChart'
+import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
+import { buildInsights } from '../../../shared/lib/insights'
+import { useI18n } from '../../../shared/i18n'
+import type { TranslationKey } from '../../../shared/i18n'
 import styles from './InflationPage.module.css'
 
-const SORTED_COUNTRIES = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name))
-
-const MODELS: { key: ForecastModel; label: string }[] = [
-  { key: 'linear', label: 'Linear trend' },
-  { key: 'movingAverage', label: 'Moving average' },
+const MODELS: { key: ForecastModel; label: TranslationKey }[] = [
+  { key: 'linear', label: 'inflation.linear' },
+  { key: 'movingAverage', label: 'inflation.movingAverage' },
 ]
 
 export default function InflationPage() {
-  const [countryCode, setCountryCode] = usePersistentState('macroscope.inflation.country', 'KAZ')
-  const [model, setModel] = usePersistentState<ForecastModel>('macroscope.inflation.model', 'linear')
+  const { t } = useI18n()
+  const { nameOf } = useCountries()
+  const [countryCode, setCountryCode] = useQueryState('country', 'KAZ')
+  const [modelRaw, setModelRaw] = useQueryState('model', 'linear')
+  const model: ForecastModel = modelRaw === 'movingAverage' ? 'movingAverage' : 'linear'
+  const countryLabel = nameOf(countryCode)
+  const chartHolder = useRef<HTMLDivElement>(null)
 
   const { data, loading, error, reload } = useAsyncData(
     () => getIndicator(countryCode, INDICATORS.inflation),
@@ -53,35 +64,56 @@ export default function InflationPage() {
     ? series.find((point) => point.year === latest.year + 1)?.forecast ?? null
     : null
 
+  const insights = useMemo(
+    () =>
+      data
+        ? buildInsights(data, t, {
+            format: (value) => `${value.toFixed(1)}%`,
+            forecastNext: nextForecast,
+          })
+        : [],
+    [data, t, nextForecast],
+  )
+
+  function exportCsv() {
+    downloadCsv(`macroscope-${countryCode}-inflation.csv`, [
+      ['year', t('inflation.actual'), t('inflation.forecast')],
+      ...series.map((point) => [point.year, point.value, point.forecast]),
+    ])
+  }
+
+  async function exportPng() {
+    try {
+      await downloadChartPng(
+        chartHolder.current,
+        `macroscope-${countryCode}-inflation.png`,
+        '#0b213e',
+      )
+    } catch (exportError) {
+      console.warn('Chart export failed:', exportError)
+    }
+  }
+
   return (
-    <PageLayout
-      title="Inflation Forecast"
-      subtitle="Consumer price inflation with a simple projection"
-    >
+    <PageLayout title={t('nav.inflation')} subtitle={t('inflation.subtitle')}>
       <div className={styles.controls}>
         <div className={styles.selectWrap}>
-          <Select
-            label="Country"
+          <CountrySelect
+            label={t('common.country')}
             value={countryCode}
-            onChange={(event) => setCountryCode(event.target.value)}
-          >
-            {SORTED_COUNTRIES.map((country) => (
-              <option key={country.code} value={country.code}>
-                {country.name}
-              </option>
-            ))}
-          </Select>
+            onChange={setCountryCode}
+          />
         </div>
         <div className={styles.models}>
-          <span className={styles.modelsLabel}>Forecast model</span>
+          <span className={styles.modelsLabel}>{t('inflation.model')}</span>
           <div className={styles.modelButtons}>
             {MODELS.map((item) => (
               <Button
                 key={item.key}
                 variant={model === item.key ? 'accent' : 'secondary'}
-                onClick={() => setModel(item.key)}
+                onClick={() => setModelRaw(item.key)}
               >
-                {item.label}
+                {t(item.label)}
               </Button>
             ))}
           </div>
@@ -89,35 +121,49 @@ export default function InflationPage() {
       </div>
 
       {loading ? (
-        <LoadingState label={`Loading inflation data for ${countryName(countryCode)}`} />
+        <LoadingState label={t('inflation.loading', { country: countryLabel })} />
       ) : error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !latest ? (
-        <EmptyState message={`No inflation data available for ${countryName(countryCode)}`} />
+        <EmptyState message={t('inflation.empty', { country: countryLabel })} />
       ) : (
         <>
           <div className={styles.stats}>
             <StatCard
-              label={`Latest actual, ${latest.year}`}
+              label={t('inflation.latest', { year: latest.year })}
               value={`${(latest.value as number).toFixed(1)}%`}
             />
             <StatCard
-              label="Average over the last 10 years"
-              value={averageTen === null ? 'No data' : `${averageTen.toFixed(1)}%`}
+              label={t('inflation.average10')}
+              value={averageTen === null ? t('common.noData') : `${averageTen.toFixed(1)}%`}
             />
             <StatCard
-              label={`Forecast for ${latest.year + 1}`}
-              value={nextForecast === null ? 'No data' : `${nextForecast.toFixed(1)}%`}
-              hint={model === 'linear' ? 'Linear trend model' : 'Moving average model'}
+              label={t('inflation.forecastFor', { year: latest.year + 1 })}
+              value={nextForecast === null ? t('common.noData') : `${nextForecast.toFixed(1)}%`}
+              hint={t(model === 'linear' ? 'inflation.linear' : 'inflation.movingAverage')}
             />
           </div>
 
-          <Card title={`Inflation, ${countryName(countryCode)}: actual and forecast`}>
-            <ForecastChart data={series} boundaryYear={latest.year} />
+          {insights.length > 0 ? (
+            <InsightList title={t('common.insights')} items={insights} />
+          ) : null}
+
+          <Card title={t('inflation.chart', { country: countryLabel })}>
+            <div ref={chartHolder}>
+              <ForecastChart
+                data={series}
+                boundaryYear={latest.year}
+                actualLabel={t('inflation.actual')}
+                forecastLabel={t('inflation.forecast')}
+              />
+            </div>
             <p className={styles.note}>
-              Solid line shows actual data. Dashed line shows a simple {FORECAST_HORIZON} year
-              projection. This is a statistical illustration, not financial advice.
+              {t('inflation.note', { years: FORECAST_HORIZON })}
+              <Tooltip text={t('ind.inflation.desc')} label={t('ind.inflation')} />
             </p>
+            <div className={styles.exportRow}>
+              <ExportBar onCsv={exportCsv} onPng={exportPng} />
+            </div>
           </Card>
         </>
       )}

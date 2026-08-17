@@ -1,31 +1,37 @@
+import { useRef } from 'react'
 import {
   Card,
+  CountrySelect,
   EmptyState,
   ErrorState,
+  ExportBar,
+  InsightList,
   LoadingState,
   PageLayout,
-  Select,
-  StatCard,
+  Tooltip,
 } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
-import { usePersistentState } from '../../../shared/hooks/usePersistentState'
+import { useQueryState } from '../../../shared/hooks/useQueryState'
 import { getIndicator } from '../../../backend/indicators'
-import { COUNTRIES, INDICATORS, countryName } from '../../../backend/constants'
+import { INDICATORS } from '../../../backend/constants'
+import { useCountries } from '../../../backend/CountriesProvider'
 import type { IndicatorPoint } from '../../../backend/worldbank'
 import IndicatorLineChart from '../../../shared/charts/IndicatorLineChart'
+import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
+import { buildInsights } from '../../../shared/lib/insights'
+import { useI18n } from '../../../shared/i18n'
+import type { TranslationKey } from '../../../shared/i18n'
 import styles from './CountryProfilePage.module.css'
-
-const SORTED_COUNTRIES = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name))
 
 type Unit = 'usd' | 'percent' | 'years'
 
-const CARDS: { key: string; code: string; label: string; unit: Unit }[] = [
-  { key: 'gdpPerCapita', code: INDICATORS.gdpPerCapita, label: 'GDP per capita', unit: 'usd' },
-  { key: 'gdpGrowth', code: INDICATORS.gdpGrowth, label: 'GDP growth', unit: 'percent' },
-  { key: 'inflation', code: INDICATORS.inflation, label: 'Inflation', unit: 'percent' },
-  { key: 'unemployment', code: INDICATORS.unemployment, label: 'Unemployment', unit: 'percent' },
-  { key: 'lifeExpectancy', code: INDICATORS.lifeExpectancy, label: 'Life expectancy', unit: 'years' },
-  { key: 'tradePercentGdp', code: INDICATORS.tradePercentGdp, label: 'Trade share of GDP', unit: 'percent' },
+const CARDS: { key: string; code: string; label: TranslationKey; desc: TranslationKey; unit: Unit }[] = [
+  { key: 'gdpPerCapita', code: INDICATORS.gdpPerCapita, label: 'ind.gdpPerCapita', desc: 'ind.gdpPerCapita.desc', unit: 'usd' },
+  { key: 'gdpGrowth', code: INDICATORS.gdpGrowth, label: 'ind.gdpGrowth', desc: 'ind.gdpGrowth.desc', unit: 'percent' },
+  { key: 'inflation', code: INDICATORS.inflation, label: 'ind.inflation', desc: 'ind.inflation.desc', unit: 'percent' },
+  { key: 'unemployment', code: INDICATORS.unemployment, label: 'ind.unemployment', desc: 'ind.unemployment.desc', unit: 'percent' },
+  { key: 'lifeExpectancy', code: INDICATORS.lifeExpectancy, label: 'ind.lifeExpectancy', desc: 'ind.lifeExpectancy.desc', unit: 'years' },
+  { key: 'tradePercentGdp', code: INDICATORS.tradePercentGdp, label: 'ind.trade', desc: 'ind.trade.desc', unit: 'percent' },
 ]
 
 function latestOf(points: IndicatorPoint[] | undefined): IndicatorPoint | null {
@@ -35,7 +41,7 @@ function latestOf(points: IndicatorPoint[] | undefined): IndicatorPoint | null {
 
 function formatStat(unit: Unit, value: number): string {
   if (unit === 'usd') return `$${Math.round(value).toLocaleString('en-US')}`
-  if (unit === 'years') return `${value.toFixed(1)} years`
+  if (unit === 'years') return `${value.toFixed(1)}`
   return `${value.toFixed(1)}%`
 }
 
@@ -44,8 +50,49 @@ async function loadProfile(countryCode: string): Promise<Record<string, Indicato
   return Object.fromEntries(CARDS.map((card, index) => [card.key, series[index]]))
 }
 
+interface ChartCardProps {
+  title: string
+  points: IndicatorPoint[]
+  unit: string
+  seriesName: string
+  fileBase: string
+}
+
+function ChartCard({ title, points, unit, seriesName, fileBase }: ChartCardProps) {
+  const holder = useRef<HTMLDivElement>(null)
+
+  function exportCsv() {
+    downloadCsv(`${fileBase}.csv`, [
+      ['year', seriesName],
+      ...points.map((point) => [point.year, point.value]),
+    ])
+  }
+
+  async function exportPng() {
+    try {
+      await downloadChartPng(holder.current, `${fileBase}.png`, '#0b213e')
+    } catch (error) {
+      console.warn('Chart export failed:', error)
+    }
+  }
+
+  return (
+    <Card title={title}>
+      <div ref={holder}>
+        <IndicatorLineChart data={points} unit={unit} seriesName={seriesName} />
+      </div>
+      <div className={styles.exportRow}>
+        <ExportBar onCsv={exportCsv} onPng={exportPng} />
+      </div>
+    </Card>
+  )
+}
+
 export default function CountryProfilePage() {
-  const [countryCode, setCountryCode] = usePersistentState('macroscope.country.selected', 'KAZ')
+  const { t } = useI18n()
+  const { nameOf } = useCountries()
+  const [countryCode, setCountryCode] = useQueryState('country', 'KAZ')
+  const countryLabel = nameOf(countryCode)
 
   const { data, loading, error, reload } = useAsyncData(
     () => loadProfile(countryCode),
@@ -55,62 +102,69 @@ export default function CountryProfilePage() {
   const hasData =
     data !== null && Object.values(data).some((series) => latestOf(series) !== null)
 
+  const insights = data
+    ? buildInsights(data.inflation ?? [], t, { format: (value) => `${value.toFixed(1)}%` })
+    : []
+
   return (
-    <PageLayout
-      title="Country Profile"
-      subtitle="All the key indicators for one country in a single view"
-    >
+    <PageLayout title={t('nav.country')} subtitle={t('country.subtitle')}>
       <div className={styles.controls}>
-        <Select
-          label="Country"
-          value={countryCode}
-          onChange={(event) => setCountryCode(event.target.value)}
-        >
-          {SORTED_COUNTRIES.map((country) => (
-            <option key={country.code} value={country.code}>
-              {country.name}
-            </option>
-          ))}
-        </Select>
+        <CountrySelect label={t('common.country')} value={countryCode} onChange={setCountryCode} />
       </div>
 
       {loading ? (
-        <LoadingState label={`Loading the profile for ${countryName(countryCode)}`} />
+        <LoadingState label={t('country.loading', { country: countryLabel })} />
       ) : error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !hasData || data === null ? (
-        <EmptyState message={`No indicator data available for ${countryName(countryCode)}`} />
+        <EmptyState message={t('country.empty', { country: countryLabel })} />
       ) : (
         <>
           <div className={styles.stats}>
             {CARDS.map((card) => {
               const latest = latestOf(data[card.key])
               return (
-                <StatCard
-                  key={card.key}
-                  label={card.label}
-                  value={latest === null ? 'No data' : formatStat(card.unit, latest.value as number)}
-                  hint={latest === null ? undefined : `Latest, ${latest.year}`}
-                />
+                <div key={card.key} className={styles.stat}>
+                  <span className={styles.statLabel}>
+                    {t(card.label)}
+                    <Tooltip text={t(card.desc)} label={t(card.label)} />
+                  </span>
+                  <span className={styles.statValue}>
+                    {latest === null ? t('common.noData') : formatStat(card.unit, latest.value as number)}
+                  </span>
+                  {latest === null ? null : (
+                    <span className={styles.statHint}>{t('common.latest', { year: latest.year })}</span>
+                  )}
+                </div>
               )
             })}
           </div>
 
-          <Card title={`GDP per capita, ${countryName(countryCode)}`}>
-            <IndicatorLineChart
-              data={data.gdpPerCapita}
-              seriesName="GDP per capita"
-              unit=""
-            />
-          </Card>
+          {insights.length > 0 ? (
+            <InsightList title={t('common.insights')} items={insights} />
+          ) : null}
 
-          <Card title={`Inflation, ${countryName(countryCode)}`}>
-            <IndicatorLineChart data={data.inflation} seriesName="Inflation" unit="%" />
-          </Card>
-
-          <Card title={`Unemployment, ${countryName(countryCode)}`}>
-            <IndicatorLineChart data={data.unemployment} seriesName="Unemployment" unit="%" />
-          </Card>
+          <ChartCard
+            title={t('country.chartGdp', { country: countryLabel })}
+            points={data.gdpPerCapita ?? []}
+            unit=""
+            seriesName={t('ind.gdpPerCapita')}
+            fileBase={`macroscope-${countryCode}-gdp-per-capita`}
+          />
+          <ChartCard
+            title={t('country.chartInflation', { country: countryLabel })}
+            points={data.inflation ?? []}
+            unit="%"
+            seriesName={t('ind.inflation')}
+            fileBase={`macroscope-${countryCode}-inflation`}
+          />
+          <ChartCard
+            title={t('country.chartUnemployment', { country: countryLabel })}
+            points={data.unemployment ?? []}
+            unit="%"
+            seriesName={t('ind.unemployment')}
+            fileBase={`macroscope-${countryCode}-unemployment`}
+          />
         </>
       )}
     </PageLayout>

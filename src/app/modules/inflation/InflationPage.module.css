@@ -31,6 +31,10 @@
   gap: var(--space-4);
 }
 
+.exportRow {
+  margin-top: var(--space-4);
+}
+
 .note {
   margin: var(--space-4) 0 0;
   font-size: 12px;

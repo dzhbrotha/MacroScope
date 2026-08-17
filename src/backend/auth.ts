@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient'
+import type { TranslationKey } from '../shared/i18n'
 
 export function signUp(email: string, password: string) {
   return supabase.auth.signUp({ email, password })
@@ -12,14 +13,14 @@ export function signOut() {
   return supabase.auth.signOut()
 }
 
-export function friendlyAuthError(message: string): string {
-  if (message === 'Failed to fetch' || message.includes('NetworkError')) {
-    return 'Cannot reach Supabase. Check your internet connection and confirm the Supabase project is active.'
-  }
-  if (message.includes('Invalid login credentials')) return 'Incorrect email or password'
-  if (message.includes('User already registered')) return 'An account with this email already exists'
-  if (message.includes('at least 6 characters')) return 'Password must be at least 6 characters'
-  if (message.includes('valid email')) return 'Enter a valid email address'
-  if (message.includes('Email not confirmed')) return 'Confirm your email first, then sign in'
-  return message
+// Maps a raw Supabase error onto a translation key so the message can be shown
+// in the reader's language. Unknown errors fall through unchanged.
+export function authErrorKey(message: string): TranslationKey | null {
+  if (message === 'Failed to fetch' || message.includes('NetworkError')) return 'authErr.network'
+  if (message.includes('Invalid login credentials')) return 'authErr.invalid'
+  if (message.includes('User already registered')) return 'authErr.exists'
+  if (message.includes('at least 6 characters')) return 'authErr.short'
+  if (message.includes('valid email')) return 'authErr.email'
+  if (message.includes('Email not confirmed')) return 'authErr.unconfirmed'
+  return null
 }

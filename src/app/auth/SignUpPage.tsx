@@ -2,13 +2,15 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { Button, Input } from '../../shared/components'
-import { friendlyAuthError, signUp } from '../../backend/auth'
+import { authErrorKey, signUp } from '../../backend/auth'
+import { useI18n } from '../../shared/i18n'
 import { useAuth } from './AuthProvider'
 import AuthLayout from './AuthLayout'
 import styles from './AuthLayout.module.css'
 
 export default function SignUpPage() {
   const { session, loading } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,37 +25,38 @@ export default function SignUpPage() {
     event.preventDefault()
     setError('')
     if (!email || !password || !confirm) {
-      setError('Fill in all fields')
+      setError(t('auth.fillAll'))
       return
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError(t('auth.shortPassword'))
       return
     }
     if (password !== confirm) {
-      setError('Passwords do not match')
+      setError(t('auth.mismatch'))
       return
     }
     setSubmitting(true)
     const { data, error: authError } = await signUp(email, password)
     setSubmitting(false)
     if (authError) {
-      setError(friendlyAuthError(authError.message))
+      const key = authErrorKey(authError.message)
+      setError(key ? t(key) : authError.message)
       return
     }
     if (data.session) {
       navigate('/app')
       return
     }
-    setNotice('Check your email to confirm your account, then sign in.')
+    setNotice(t('auth.confirmEmail'))
   }
 
   return (
     <AuthLayout
-      title="Create account"
+      title={t('auth.signUp')}
       footer={
         <>
-          Already registered? <Link to="/signin">Sign in</Link>
+          {t('auth.registered')} <Link to="/signin">{t('auth.signIn')}</Link>
         </>
       }
     >
@@ -62,21 +65,21 @@ export default function SignUpPage() {
       ) : (
         <form className={styles.form} onSubmit={handleSubmit}>
           <Input
-            label="Email"
+            label={t('auth.email')}
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             autoComplete="email"
           />
           <Input
-            label="Password"
+            label={t('auth.password')}
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             autoComplete="new-password"
           />
           <Input
-            label="Confirm password"
+            label={t('auth.confirmPassword')}
             type="password"
             value={confirm}
             onChange={(event) => setConfirm(event.target.value)}
@@ -84,7 +87,7 @@ export default function SignUpPage() {
           />
           {error ? <p className={styles.formError}>{error}</p> : null}
           <Button variant="accent" type="submit" disabled={submitting}>
-            {submitting ? 'Creating account' : 'Create account'}
+            {submitting ? t('auth.creating') : t('auth.signUp')}
           </Button>
         </form>
       )}

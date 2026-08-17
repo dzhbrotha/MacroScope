@@ -1,64 +1,32 @@
 import { Link } from 'react-router-dom'
 import { Scale, TrendingUp, Briefcase, Gauge, Brain, House, Globe, ArrowRight } from 'lucide-react'
 import { PageLayout } from '../shared/components'
+import { useI18n } from '../shared/i18n'
+import type { TranslationKey } from '../shared/i18n'
 import styles from './DashboardPage.module.css'
 
-const modules = [
-  {
-    to: '/app/sanctions',
-    icon: Scale,
-    title: 'Sanctions Impact',
-    text: 'GDP, trade and investment before and after sanctions.',
-  },
-  {
-    to: '/app/inflation',
-    icon: TrendingUp,
-    title: 'Inflation Forecast',
-    text: 'Historical inflation by country plus a simple forecast.',
-  },
-  {
-    to: '/app/unemployment',
-    icon: Briefcase,
-    title: 'Unemployment Analysis',
-    text: 'Unemployment dynamics with several countries on one chart.',
-  },
-  {
-    to: '/app/quality-of-life',
-    icon: Gauge,
-    title: 'Quality of Life Index',
-    text: 'A composite index with a ranking table and country pages.',
-  },
-  {
-    to: '/app/country',
-    icon: Globe,
-    title: 'Country Profile',
-    text: 'All the key indicators for a single country in one view.',
-  },
-  {
-    to: '/app/ai-explainer',
-    icon: Brain,
-    title: 'AI Crisis Explainer',
-    text: 'AI explains economic crises in plain language.',
-  },
-  {
-    to: '/app/property-lab',
-    icon: House,
-    title: 'Property Lab',
-    text: 'Connect rates, rents and unexpected events to a property decision.',
-  },
+const modules: { to: string; icon: typeof Scale; title: TranslationKey; text: TranslationKey }[] = [
+  { to: '/app/sanctions', icon: Scale, title: 'nav.sanctions', text: 'dash.sanctions' },
+  { to: '/app/inflation', icon: TrendingUp, title: 'nav.inflation', text: 'dash.inflation' },
+  { to: '/app/unemployment', icon: Briefcase, title: 'nav.unemployment', text: 'dash.unemployment' },
+  { to: '/app/quality-of-life', icon: Gauge, title: 'nav.quality', text: 'dash.quality' },
+  { to: '/app/country', icon: Globe, title: 'nav.country', text: 'dash.country' },
+  { to: '/app/ai-explainer', icon: Brain, title: 'nav.ai', text: 'dash.ai' },
+  { to: '/app/property-lab', icon: House, title: 'nav.property', text: 'dash.property' },
 ]
 
 export default function DashboardPage() {
+  const { t } = useI18n()
   return (
-    <PageLayout title="Dashboard" subtitle="Choose a module to explore">
+    <PageLayout title={t('dash.title')} subtitle={t('dash.subtitle')}>
       <div className={styles.grid}>
         {modules.map((module) => (
           <Link key={module.to} to={module.to} className={styles.card}>
             <module.icon className={styles.icon} size={22} strokeWidth={1.5} />
-            <h3 className={styles.title}>{module.title}</h3>
-            <p className={styles.text}>{module.text}</p>
+            <h3 className={styles.title}>{t(module.title)}</h3>
+            <p className={styles.text}>{t(module.text)}</p>
             <span className={styles.open}>
-              Open module
+              {t('dash.open')}
               <ArrowRight size={14} strokeWidth={1.75} />
             </span>
           </Link>

@@ -16,6 +16,8 @@ interface ForecastChartProps {
   boundaryYear: number
   unit?: string
   height?: number
+  actualLabel?: string
+  forecastLabel?: string
 }
 
 export default function ForecastChart({
@@ -23,6 +25,8 @@ export default function ForecastChart({
   boundaryYear,
   unit = '%',
   height = 300,
+  actualLabel = 'Actual',
+  forecastLabel = 'Forecast',
 }: ForecastChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -56,7 +60,7 @@ export default function ForecastChart({
           stroke={CHART.axis}
           strokeDasharray="4 4"
           label={{
-            value: 'Forecast',
+            value: forecastLabel,
             fill: CHART.axis,
             fontSize: 11,
             position: 'insideTopRight',
@@ -65,7 +69,7 @@ export default function ForecastChart({
         <Line
           type="monotone"
           dataKey="value"
-          name="Actual"
+          name={actualLabel}
           stroke={CHART.accent}
           strokeWidth={2}
           dot={false}
@@ -74,7 +78,7 @@ export default function ForecastChart({
         <Line
           type="monotone"
           dataKey="forecast"
-          name="Forecast"
+          name={forecastLabel}
           stroke={CHART.accentSoft}
           strokeWidth={2}
           strokeDasharray="6 4"

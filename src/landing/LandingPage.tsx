@@ -2,140 +2,178 @@ import { Link } from 'react-router-dom'
 import { Scale, TrendingUp, Briefcase, Gauge, Brain, Database, Zap, Lock } from 'lucide-react'
 import { ButtonLink } from '../shared/components'
 import { Logo } from '../shared/components'
+import { LanguageSwitcher, useI18n } from '../shared/i18n'
+import type { TranslationKey } from '../shared/i18n'
 import buttonStyles from '../shared/components/Button.module.css'
 import styles from './LandingPage.module.css'
 
-const modules = [
-  {
-    icon: Scale,
-    title: 'Sanctions Impact',
-    text: 'GDP, trade and investment before and after sanctions, with a timeline of key packages.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Inflation Forecast',
-    text: 'Historical inflation by country plus a simple forecast with a clear boundary between fact and projection.',
-  },
-  {
-    icon: Briefcase,
-    title: 'Unemployment Analysis',
-    text: 'Unemployment dynamics by country and year, with several countries compared on one chart.',
-  },
-  {
-    icon: Gauge,
-    title: 'Quality of Life Index',
-    text: 'A composite index built from open indicators, with a ranking table and a page for every country.',
-  },
-  {
-    icon: Brain,
-    title: 'AI Crisis Explainer',
-    text: 'Pick a crisis or ask a question. AI explains causes, mechanics and consequences in plain language.',
-  },
+const modules: { icon: typeof Scale; title: TranslationKey; text: TranslationKey }[] = [
+  { icon: Scale, title: 'nav.sanctions', text: 'land.mod1' },
+  { icon: TrendingUp, title: 'nav.inflation', text: 'land.mod2' },
+  { icon: Briefcase, title: 'nav.unemployment', text: 'land.mod3' },
+  { icon: Gauge, title: 'nav.quality', text: 'land.mod4' },
+  { icon: Brain, title: 'nav.ai', text: 'land.mod5' },
 ]
 
-const steps = [
-  {
-    icon: Database,
-    title: 'Open data',
-    text: 'Every indicator comes from the World Bank API, free and public.',
-  },
-  {
-    icon: Zap,
-    title: 'Fast by design',
-    text: 'Responses are cached in Supabase so pages load instantly.',
-  },
-  {
-    icon: Lock,
-    title: 'Secure AI',
-    text: 'The AI module runs through a server function. Keys never reach your browser.',
-  },
+const steps: { icon: typeof Database; title: TranslationKey; text: TranslationKey }[] = [
+  { icon: Database, title: 'land.step1', text: 'land.step1x' },
+  { icon: Zap, title: 'land.step2', text: 'land.step2x' },
+  { icon: Lock, title: 'land.step3', text: 'land.step3x' },
 ]
 
-const audiences = [
-  ['New investors', 'Build confidence before putting real money at risk.'],
-  ['Economy watchers', 'Understand how inflation, jobs, rates, and crises move markets.'],
-  ['Careful decision-makers', 'Test assumptions instead of relying on hype or guesswork.'],
+const audiences: [TranslationKey, TranslationKey][] = [
+  ['land.aud1', 'land.aud1x'],
+  ['land.aud2', 'land.aud2x'],
+  ['land.aud3', 'land.aud3x'],
 ]
 
 export default function LandingPage() {
+  const { t } = useI18n()
+
   return (
     <div>
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Logo />
           <nav className={styles.nav}>
-            <a href="#why" className={styles.navLink}>Why MacroScope</a>
-            <a href="#explore" className={styles.navLink}>Explore</a>
-            <a href="#property" className={styles.navLink}>Property Lab</a>
-            <Link to="/signin" className={styles.navLink}>
-              Sign in
-            </Link>
-            <ButtonLink to="/signup" variant="accent">
-              Get started
-            </ButtonLink>
+            <a href="#why" className={styles.navLink}>{t('land.navWhy')}</a>
+            <a href="#explore" className={styles.navLink}>{t('land.navExplore')}</a>
+            <a href="#property" className={styles.navLink}>{t('land.navProperty')}</a>
+            <Link to="/signin" className={styles.navLink}>{t('land.navSignIn')}</Link>
+            <LanguageSwitcher />
+            <ButtonLink to="/signup" variant="accent">{t('land.navStart')}</ButtonLink>
           </nav>
         </div>
       </header>
 
       <main>
         <section className={`${styles.hero} ${styles.stars}`}>
-          <div className={styles.heroTop}><p className={styles.kicker}>MacroScope / economic intelligence for real decisions</p><span className={styles.status}><i /> Live learning environment</span></div>
-          <h1 className={styles.heroTitle}>Make sense of the forces behind your next decision.</h1>
-          <p className={styles.heroText}>
-            MacroScope is a learning platform that turns complicated economic conditions into
-            clear, practical insight. Explore the forces shaping property investing, then test
-            what they could mean for a real decision.
-          </p>
+          <div className={styles.heroTop}>
+            <p className={styles.kicker}>{t('land.kicker')}</p>
+            <span className={styles.status}><i /> {t('land.status')}</span>
+          </div>
+          <h1 className={styles.heroTitle}>{t('land.heroTitle')}</h1>
+          <p className={styles.heroText}>{t('land.heroText')}</p>
           <div className={styles.heroActions}>
-            <ButtonLink to="/signup" variant="accent">
-              Enter the lab
-            </ButtonLink>
+            <ButtonLink to="/signup" variant="accent">{t('land.heroEnter')}</ButtonLink>
             <a
               href="#modules"
               className={`${buttonStyles.button} ${buttonStyles.link} ${buttonStyles.secondary}`}
             >
-              See what we offer
+              {t('land.heroSee')}
             </a>
           </div>
-          <div className={styles.signalRail}><div><span>01 / Understand</span><strong>Inflation, rates, jobs</strong></div><div><span>02 / Explore</span><strong>Property decisions</strong></div><div><span>03 / Test</span><strong>Scenarios, not guesses</strong></div></div>
+          <div className={styles.signalRail}>
+            <div><span>{t('land.rail1')}</span><strong>{t('land.rail1v')}</strong></div>
+            <div><span>{t('land.rail2')}</span><strong>{t('nav.country')}</strong></div>
+            <div><span>{t('land.rail3')}</span><strong>{t('land.rail3v')}</strong></div>
+          </div>
         </section>
 
         <section className={styles.storySection} id="why">
-          <div className={styles.storyVisual}><div className={styles.visualWindow}><div className={styles.visualTop}><span>MACROSCOPE / FIELD NOTE</span><span>01—03</span></div><div className={styles.visualTitle}>The economy is not background noise.</div><div className={styles.visualChart}><i /><i /><i /><i /><i /><b /></div><div className={styles.visualReadout}><span>Signal / property decision</span><strong>Conditions change. Your assumptions should too.</strong></div></div></div>
+          <div className={styles.storyVisual}>
+            <div className={styles.visualWindow}>
+              <div className={styles.visualTop}><span>{t('land.fieldNote')}</span><span>01—03</span></div>
+              <div className={styles.visualTitle}>{t('land.visualTitle')}</div>
+              <div className={styles.visualChart}><i /><i /><i /><i /><i /><b /></div>
+              <div className={styles.visualReadout}>
+                <span>{t('land.visualSignal')}</span>
+                <strong>{t('land.visualStrong')}</strong>
+              </div>
+            </div>
+          </div>
           <div className={styles.storyCopy}>
-            <article><span className={styles.storyNumber}>01</span><p className={styles.kicker}>The problem</p><h2>Big economic headlines are easy to see. Their consequences are not.</h2><p>Rates, inflation, employment, and crises all shape the decisions people make. But the connection between a headline and a property deal is often hidden behind jargon and scattered spreadsheets.</p></article>
-            <article><span className={styles.storyNumber}>02</span><p className={styles.kicker}>The MacroScope answer</p><h2>We make the relationship visible.</h2><p>MacroScope brings reliable indicators, plain-language explanations, and transparent what-if tools into one calm workspace. You can follow a signal, understand the mechanism, and test an assumption.</p></article>
-            <article><span className={styles.storyNumber}>03</span><p className={styles.kicker}>The result</p><h2>More context. Better questions. Safer learning.</h2><p>Use the platform to build intuition before making a real decision. The goal is not to predict the future—it is to help you see what could change, what matters, and what to test next.</p><ButtonLink to="/signup" variant="accent">Explore the workspace</ButtonLink></article>
+            <article>
+              <span className={styles.storyNumber}>01</span>
+              <p className={styles.kicker}>{t('land.problemKicker')}</p>
+              <h2>{t('land.problemTitle')}</h2>
+              <p>{t('land.problemText')}</p>
+            </article>
+            <article>
+              <span className={styles.storyNumber}>02</span>
+              <p className={styles.kicker}>{t('land.answerKicker')}</p>
+              <h2>{t('land.answerTitle')}</h2>
+              <p>{t('land.answerText')}</p>
+            </article>
+            <article>
+              <span className={styles.storyNumber}>03</span>
+              <p className={styles.kicker}>{t('land.resultKicker')}</p>
+              <h2>{t('land.resultTitle')}</h2>
+              <p>{t('land.resultText')}</p>
+              <ButtonLink to="/signup" variant="accent">{t('land.resultCta')}</ButtonLink>
+            </article>
           </div>
         </section>
 
         <section className={styles.widgetSection} id="explore">
-          <div className={styles.widgetHeader}><div><p className={styles.kicker}>Inside the workspace</p><h2 className={styles.sectionTitle}>A dashboard for better questions.</h2></div><span className={styles.widgetStamp}>Educational preview / 2026</span></div>
+          <div className={styles.widgetHeader}>
+            <div>
+              <p className={styles.kicker}>{t('land.insideKicker')}</p>
+              <h2 className={styles.sectionTitle}>{t('land.insideTitle')}</h2>
+            </div>
+            <span className={styles.widgetStamp}>{t('land.stamp')}</span>
+          </div>
           <div className={styles.widgetGrid}>
-            <article className={`${styles.widget} ${styles.widgetWide}`}><div className={styles.widgetTop}><span>Macro pulse</span><span className={styles.widgetTag}>Sample indicators</span></div><div className={styles.signalRows}><div><span>Inflation</span><strong>3.2%</strong><em className={styles.down}>− 0.4%</em></div><div><span>Unemployment</span><strong>4.1%</strong><em>+ 0.2%</em></div><div><span>Policy rate</span><strong>5.25%</strong><em>Watching</em></div></div><p className={styles.widgetNote}>See how changing conditions affect confidence, borrowing costs, and property cash flow.</p></article>
-            <article className={styles.widget}><div className={styles.widgetTop}><span>Property Lab</span><span className={styles.widgetIcon}>↗</span></div><strong className={styles.widgetNumber}>$186</strong><span className={styles.widgetLabel}>monthly cash flow in a rate-shock scenario</span><div className={styles.miniBar}><i /></div><a href="/signup">Open the calculator →</a></article>
-            <article className={styles.widget}><div className={styles.widgetTop}><span>Learning path</span><span className={styles.widgetTag}>10 lessons</span></div><strong className={styles.widgetNumber}>03 / 10</strong><span className={styles.widgetLabel}>concepts to make the numbers feel familiar</span><div className={styles.lessonList}><span>NOI</span><span>Cap rate</span><span>DSCR</span></div><a href="/signup">Start learning →</a></article>
-            <article className={`${styles.widget} ${styles.widgetDark}`}><div className={styles.widgetTop}><span>Next question</span><span>MacroScope</span></div><p>“What if the rent falls, rates rise, and the roof needs replacing?”</p><a href="/signup">Build a scenario →</a></article>
+            <article className={`${styles.widget} ${styles.widgetWide}`}>
+              <div className={styles.widgetTop}>
+                <span>{t('land.pulse')}</span>
+                <span className={styles.widgetTag}>{t('land.sampleIndicators')}</span>
+              </div>
+              <div className={styles.signalRows}>
+                <div><span>{t('ind.inflation')}</span><strong>3.2%</strong><em className={styles.down}>− 0.4%</em></div>
+                <div><span>{t('ind.unemployment')}</span><strong>4.1%</strong><em>+ 0.2%</em></div>
+                <div><span>{t('land.policyRate')}</span><strong>5.25%</strong><em>{t('land.watching')}</em></div>
+              </div>
+              <p className={styles.widgetNote}>{t('land.pulseNote')}</p>
+            </article>
+            <article className={styles.widget}>
+              <div className={styles.widgetTop}>
+                <span>{t('nav.property')}</span>
+                <span className={styles.widgetIcon}>↗</span>
+              </div>
+              <strong className={styles.widgetNumber}>$186</strong>
+              <span className={styles.widgetLabel}>{t('land.labCashLabel')}</span>
+              <div className={styles.miniBar}><i /></div>
+              <a href="/signup">{t('land.labOpen')} →</a>
+            </article>
+            <article className={styles.widget}>
+              <div className={styles.widgetTop}>
+                <span>{t('land.pathTitle')}</span>
+                <span className={styles.widgetTag}>{t('land.pathTag')}</span>
+              </div>
+              <strong className={styles.widgetNumber}>03 / 10</strong>
+              <span className={styles.widgetLabel}>{t('land.pathLabel')}</span>
+              <div className={styles.lessonList}><span>NOI</span><span>Cap rate</span><span>DSCR</span></div>
+              <a href="/signup">{t('land.pathStart')} →</a>
+            </article>
+            <article className={`${styles.widget} ${styles.widgetDark}`}>
+              <div className={styles.widgetTop}><span>{t('land.nextQuestion')}</span><span>MacroScope</span></div>
+              <p>«{t('land.questionQuote')}»</p>
+              <a href="/signup">{t('land.buildScenario')} →</a>
+            </article>
           </div>
         </section>
 
         <section className={styles.section}>
           <div className={styles.statement}>
-            <div><p className={styles.kicker}>Who we are</p><h2 className={styles.sectionTitle}>A calmer way to learn what moves markets.</h2></div>
-            <p>We are building MacroScope for people who want to understand before they act. Our product connects trusted macroeconomic data, transparent calculations, and beginner-friendly explanations in one focused workspace.</p>
+            <div>
+              <p className={styles.kicker}>{t('land.whoKicker')}</p>
+              <h2 className={styles.sectionTitle}>{t('land.whoTitle')}</h2>
+            </div>
+            <p>{t('land.whoText')}</p>
           </div>
         </section>
 
         <section className={styles.section} id="modules">
           <div className={styles.sectionInner}>
-            <p className={styles.kicker}>What we offer</p>
-            <h2 className={styles.sectionTitle}>Tools that connect the headline to the decision.</h2>
+            <p className={styles.kicker}>{t('land.offerKicker')}</p>
+            <h2 className={styles.sectionTitle}>{t('land.offerTitle')}</h2>
             <div className={styles.modulesGrid}>
               {modules.map((module) => (
                 <article key={module.title} className={styles.moduleCard}>
                   <module.icon className={styles.moduleIcon} size={22} strokeWidth={1.5} />
-                  <h3 className={styles.moduleTitle}>{module.title}</h3>
-                  <p className={styles.moduleText}>{module.text}</p>
+                  <h3 className={styles.moduleTitle}>{t(module.title)}</h3>
+                  <p className={styles.moduleText}>{t(module.text)}</p>
                 </article>
               ))}
             </div>
@@ -143,26 +181,48 @@ export default function LandingPage() {
         </section>
 
         <section className={`${styles.section} ${styles.featureSection}`} id="property">
-          <div className={styles.feature}><div><p className={styles.kicker}>Start here / Property Lab</p><h2 className={styles.featureTitle}>What happens to a property deal when the world changes?</h2><p className={styles.featureText}>Adjust rent, vacancy, interest rates, repairs, and reserves. See the result instantly, with every assumption visible.</p><ButtonLink to="/signup" variant="accent">Try the Property Lab</ButtonLink></div><div className={styles.labPreview}><span>Sample scenario</span><strong>Higher interest rates</strong><div className={styles.previewLine}><span>Monthly cash flow</span><b>− $186</b></div><div className={styles.previewLine}><span>DSCR</span><b>0.94x</b></div><div className={styles.previewLine}><span>Learning note</span><b>Test a safer case →</b></div></div></div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionInner}>
-            <p className={styles.kicker}>Made for</p>
-            <div className={styles.audienceGrid}>{audiences.map(([title, text], index) => <article key={title}><span className={styles.index}>0{index + 1}</span><h3 className={styles.moduleTitle}>{title}</h3><p className={styles.moduleText}>{text}</p></article>)}</div>
+          <div className={styles.feature}>
+            <div>
+              <p className={styles.kicker}>{t('land.propKicker')}</p>
+              <h2 className={styles.featureTitle}>{t('land.propTitle')}</h2>
+              <p className={styles.featureText}>{t('land.propText')}</p>
+              <ButtonLink to="/signup" variant="accent">{t('land.propCta')}</ButtonLink>
+            </div>
+            <div className={styles.labPreview}>
+              <span>{t('land.labSample')}</span>
+              <strong>{t('land.labScenario')}</strong>
+              <div className={styles.previewLine}><span>{t('land.labCash')}</span><b>− $186</b></div>
+              <div className={styles.previewLine}><span>DSCR</span><b>0.94x</b></div>
+              <div className={styles.previewLine}><span>{t('land.labNote')}</span><b>{t('land.labNoteValue')} →</b></div>
+            </div>
           </div>
         </section>
 
         <section className={styles.section}>
           <div className={styles.sectionInner}>
-            <p className={styles.kicker}>Our approach</p>
-            <h2 className={styles.sectionTitle}>Observe. Distil. Test. Decide.</h2>
+            <p className={styles.kicker}>{t('land.madeFor')}</p>
+            <div className={styles.audienceGrid}>
+              {audiences.map(([title, text], index) => (
+                <article key={title}>
+                  <span className={styles.index}>0{index + 1}</span>
+                  <h3 className={styles.moduleTitle}>{t(title)}</h3>
+                  <p className={styles.moduleText}>{t(text)}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionInner}>
+            <p className={styles.kicker}>{t('land.approachKicker')}</p>
+            <h2 className={styles.sectionTitle}>{t('land.approachTitle')}</h2>
             <div className={styles.stepsGrid}>
               {steps.map((step) => (
                 <div key={step.title}>
                   <step.icon size={20} strokeWidth={1.5} />
-                  <h3 className={styles.moduleTitle}>{step.title}</h3>
-                  <p className={styles.moduleText}>{step.text}</p>
+                  <h3 className={styles.moduleTitle}>{t(step.title)}</h3>
+                  <p className={styles.moduleText}>{t(step.text)}</p>
                 </div>
               ))}
             </div>
@@ -171,12 +231,10 @@ export default function LandingPage() {
 
         <section className={styles.section}>
           <div className={styles.ctaInner}>
-            <p className={styles.kicker}>Your next step</p>
-            <h2 className={styles.ctaTitle}>Start with a clearer picture.</h2>
-            <p className={styles.ctaText}>Create a free account and explore the data, scenarios, and explanations behind the market.</p>
-            <ButtonLink to="/signup" variant="accent">
-              Create free account
-            </ButtonLink>
+            <p className={styles.kicker}>{t('land.nextKicker')}</p>
+            <h2 className={styles.ctaTitle}>{t('land.ctaTitle')}</h2>
+            <p className={styles.ctaText}>{t('land.ctaText')}</p>
+            <ButtonLink to="/signup" variant="accent">{t('land.ctaButton')}</ButtonLink>
           </div>
         </section>
       </main>
@@ -184,7 +242,7 @@ export default function LandingPage() {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <Logo />
-          <span>Built on open World Bank data</span>
+          <span>{t('land.footer')}</span>
         </div>
       </footer>
     </div>

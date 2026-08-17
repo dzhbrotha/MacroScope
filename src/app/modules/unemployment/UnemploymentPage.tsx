@@ -1,21 +1,27 @@
-import { usePersistentState } from '../../../shared/hooks/usePersistentState'
+import { useMemo, useRef, useState } from 'react'
+import { Search } from 'lucide-react'
 import {
   Card,
   EmptyState,
   ErrorState,
+  ExportBar,
   LoadingState,
   PageLayout,
   StatCard,
+  Tooltip,
 } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
+import { useQueryStateList } from '../../../shared/hooks/useQueryState'
 import { getIndicatorForCountries } from '../../../backend/indicators'
-import { COUNTRIES, INDICATORS, countryName } from '../../../backend/constants'
+import { INDICATORS } from '../../../backend/constants'
+import { useCountries } from '../../../backend/CountriesProvider'
 import type { IndicatorPoint } from '../../../backend/worldbank'
 import MultiLineChart from '../../../shared/charts/MultiLineChart'
 import { SERIES_COLORS } from '../../../shared/charts/chartStyle'
+import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
+import { useI18n } from '../../../shared/i18n'
 import styles from './UnemploymentPage.module.css'
 
-const SORTED_COUNTRIES = [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name))
 const DEFAULT_SELECTED = ['KAZ', 'USA', 'DEU']
 const MAX_COUNTRIES = 5
 
@@ -24,81 +30,124 @@ function factsOf(points: IndicatorPoint[] | undefined) {
 }
 
 export default function UnemploymentPage() {
-  const [selected, setSelected] = usePersistentState<string[]>(
-    'macroscope.unemployment.countries',
-    DEFAULT_SELECTED,
-  )
+  const { t } = useI18n()
+  const { countries, featured, nameOf, matches } = useCountries()
+  const [selected, setSelected] = useQueryStateList('countries', DEFAULT_SELECTED)
+  const [query, setQuery] = useState('')
+  const chartHolder = useRef<HTMLDivElement>(null)
 
   const { data, loading, error, reload } = useAsyncData(
     () => getIndicatorForCountries(selected, INDICATORS.unemployment),
     [selected.join('|')],
   )
 
-  function toggleCountry(code: string) {
-    setSelected((current) => {
-      if (current.includes(code)) {
-        return current.length > 1 ? current.filter((item) => item !== code) : current
-      }
-      if (current.length >= MAX_COUNTRIES) return current
-      return [...current, code]
+  // Two hundred chips would be unusable, so the grid shows the curated set plus
+  // whatever is selected, and opens up to the whole world once you search.
+  const visible = useMemo(() => {
+    if (query.trim()) {
+      return countries.filter((country) => matches(country, query)).slice(0, 60)
+    }
+    const base = new Map(featured.map((country) => [country.code, country]))
+    selected.forEach((code) => {
+      if (!base.has(code)) base.set(code, { code, name: nameOf(code), alt: '' })
     })
+    return [...base.values()].sort((a, b) => a.name.localeCompare(b.name))
+  }, [countries, featured, query, selected, nameOf, matches])
+
+  function toggleCountry(code: string) {
+    if (selected.includes(code)) {
+      if (selected.length > 1) setSelected(selected.filter((item) => item !== code))
+      return
+    }
+    if (selected.length >= MAX_COUNTRIES) return
+    setSelected([...selected, code])
   }
 
   const series = selected.map((code, index) => ({
     key: code,
-    name: countryName(code),
+    name: nameOf(code),
     color: SERIES_COLORS[index % SERIES_COLORS.length],
     data: data?.[code] ?? [],
   }))
   const hasData = data !== null && series.some((item) => factsOf(item.data).length > 0)
 
+  function exportCsv() {
+    const years = new Set<number>()
+    series.forEach((item) => item.data.forEach((point) => years.add(point.year)))
+    const sorted = [...years].sort((a, b) => a - b)
+    downloadCsv('macroscope-unemployment.csv', [
+      ['year', ...series.map((item) => item.name)],
+      ...sorted.map((year) => [
+        year,
+        ...series.map((item) => item.data.find((point) => point.year === year)?.value ?? null),
+      ]),
+    ])
+  }
+
+  async function exportPng() {
+    try {
+      await downloadChartPng(chartHolder.current, 'macroscope-unemployment.png', '#0b213e')
+    } catch (exportError) {
+      console.warn('Chart export failed:', exportError)
+    }
+  }
+
   return (
-    <PageLayout
-      title="Unemployment Analysis"
-      subtitle="Unemployment dynamics with several countries on one chart"
-    >
-      <Card title={`Countries, up to ${MAX_COUNTRIES}`}>
+    <PageLayout title={t('nav.unemployment')} subtitle={t('unemp.subtitle')}>
+      <Card title={t('unemp.pick', { max: MAX_COUNTRIES })}>
+        <div className={styles.searchRow}>
+          <Search size={15} strokeWidth={2} className={styles.searchIcon} />
+          <input
+            className={styles.search}
+            value={query}
+            placeholder={t('common.search')}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </div>
         <div className={styles.chips}>
-          {SORTED_COUNTRIES.map((country) => {
-            const isSelected = selected.includes(country.code)
-            const isDisabled = !isSelected && selected.length >= MAX_COUNTRIES
-            return (
-              <button
-                key={country.code}
-                className={isSelected ? `${styles.chip} ${styles.chipSelected}` : styles.chip}
-                onClick={() => toggleCountry(country.code)}
-                disabled={isDisabled}
-              >
-                {country.name}
-              </button>
-            )
-          })}
+          {visible.length === 0 ? (
+            <p className={styles.searchEmpty}>{t('common.searchEmpty')}</p>
+          ) : (
+            visible.map((country) => {
+              const isSelected = selected.includes(country.code)
+              const isDisabled = !isSelected && selected.length >= MAX_COUNTRIES
+              return (
+                <button
+                  key={country.code}
+                  className={isSelected ? `${styles.chip} ${styles.chipSelected}` : styles.chip}
+                  onClick={() => toggleCountry(country.code)}
+                  disabled={isDisabled}
+                >
+                  {country.name}
+                </button>
+              )
+            })
+          )}
         </div>
       </Card>
 
       {loading ? (
-        <LoadingState label="Loading unemployment data" />
+        <LoadingState label={t('unemp.loading')} />
       ) : error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !hasData ? (
-        <EmptyState message="No unemployment data available for the selected countries" />
+        <EmptyState message={t('unemp.empty')} />
       ) : (
         <>
-          <Card title="Unemployment rate, share of labor force">
-            <MultiLineChart series={series} unit="%" />
+          <Card title={t('unemp.chart')}>
+            <div ref={chartHolder}>
+              <MultiLineChart series={series} unit="%" />
+            </div>
+            <div className={styles.exportRow}>
+              <ExportBar onCsv={exportCsv} onPng={exportPng} />
+            </div>
           </Card>
 
           <div className={styles.stats}>
             {series.map((item) => {
               const facts = factsOf(item.data)
               if (facts.length === 0) {
-                return (
-                  <StatCard
-                    key={item.key}
-                    label={item.name}
-                    value="No data"
-                  />
-                )
+                return <StatCard key={item.key} label={item.name} value={t('common.noData')} />
               }
               const latest = facts[facts.length - 1]
               const earlier = facts.filter((point) => point.year <= latest.year - 10)
@@ -111,14 +160,22 @@ export default function UnemploymentPage() {
                   label={`${item.name}, ${latest.year}`}
                   value={`${(latest.value as number).toFixed(1)}%`}
                   hint={
-                    delta === null
+                    delta === null || base === null
                       ? undefined
-                      : `${delta >= 0 ? '+' : ''}${delta.toFixed(1)} points since ${base?.year}`
+                      : t('unemp.since', {
+                          delta: `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}`,
+                          year: base.year,
+                        })
                   }
                 />
               )
             })}
           </div>
+
+          <p className={styles.legend}>
+            {t('ind.unemployment')}
+            <Tooltip text={t('ind.unemployment.desc')} label={t('ind.unemployment')} />
+          </p>
         </>
       )}
     </PageLayout>

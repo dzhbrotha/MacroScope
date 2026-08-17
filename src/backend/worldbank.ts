@@ -24,6 +24,12 @@ export function fetchWorldBankCountries(): Promise<WorldBankCountry[]> {
       const payload = (await response.json()) as [unknown, Array<{ id: string; name: string; region?: { id: string } }>]
       return (payload[1] ?? []).filter((country) => country.id && country.id !== 'NA' && country.region?.id !== 'NA').map((country) => ({ code: country.id, name: country.name }))
     })
+    .catch((error) => {
+      // Drop the cached rejection so a later visit can retry instead of
+      // being stuck with a permanently failed promise.
+      countriesPromise = null
+      throw error
+    })
   return countriesPromise
 }
 

@@ -1,26 +1,32 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
-import { usePersistentState } from '../../../shared/hooks/usePersistentState'
 import {
   Button,
   Card,
   EmptyState,
   ErrorState,
+  ExportBar,
   LoadingState,
   PageLayout,
+  Tooltip,
 } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
+import { useQueryState } from '../../../shared/hooks/useQueryState'
 import { getIndicator } from '../../../backend/indicators'
-import { INDICATORS, countryName } from '../../../backend/constants'
+import { INDICATORS } from '../../../backend/constants'
+import { useCountries } from '../../../backend/CountriesProvider'
 import type { IndicatorPoint } from '../../../backend/worldbank'
 import IndicatorLineChart from '../../../shared/charts/IndicatorLineChart'
+import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
+import { useI18n } from '../../../shared/i18n'
+import type { TranslationKey } from '../../../shared/i18n'
 import { SANCTIONED_COUNTRIES, SANCTION_EVENTS } from './data'
 import styles from './SanctionsPage.module.css'
 
-const CHART_CONFIG = [
-  { title: 'GDP growth', unit: '%', indicator: INDICATORS.gdpGrowth },
-  { title: 'Trade share of GDP', unit: '%', indicator: INDICATORS.tradePercentGdp },
-  { title: 'FDI inflows share of GDP', unit: '%', indicator: INDICATORS.fdiInflows },
+const CHART_CONFIG: { title: TranslationKey; desc: TranslationKey; unit: string; indicator: string }[] = [
+  { title: 'sanctions.gdpGrowth', desc: 'ind.gdpGrowth.desc', unit: '%', indicator: INDICATORS.gdpGrowth },
+  { title: 'sanctions.trade', desc: 'ind.trade.desc', unit: '%', indicator: INDICATORS.tradePercentGdp },
+  { title: 'sanctions.fdi', desc: 'ind.fdi.desc', unit: '%', indicator: INDICATORS.fdiInflows },
 ]
 
 const COMPARE_SPAN = 3
@@ -33,36 +39,53 @@ function windowAverage(points: IndicatorPoint[], fromYear: number, toYear: numbe
   return values.reduce((sum, value) => sum + value, 0) / values.length
 }
 
-function formatValue(value: number | null, unit: string): string {
-  return value === null ? 'No data' : `${value.toFixed(1)}${unit}`
-}
-
 export default function SanctionsPage() {
-  const [country, setCountry] = usePersistentState('macroscope.sanctions.country', 'RUS')
-  const [selectedYear, setSelectedYear] = useState(() => SANCTION_EVENTS[country][0].year)
-  const events = SANCTION_EVENTS[country]
+  const { t, lang } = useI18n()
+  const { nameOf } = useCountries()
+  const [country, setCountry] = useQueryState('country', 'RUS')
+  const events = SANCTION_EVENTS[country] ?? SANCTION_EVENTS.RUS
+  const [yearRaw, setYearRaw] = useQueryState('event', String(events[0].year))
+  const selectedYear = events.some((event) => String(event.year) === yearRaw)
+    ? Number(yearRaw)
+    : events[0].year
+  const countryLabel = nameOf(country)
+  const holders = useRef<(HTMLDivElement | null)[]>([])
 
   const { data, loading, error, reload } = useAsyncData(
-    () =>
-      Promise.all(
-        CHART_CONFIG.map((config) => getIndicator(country, config.indicator)),
-      ),
+    () => Promise.all(CHART_CONFIG.map((config) => getIndicator(country, config.indicator))),
     [country],
   )
 
   function selectCountry(code: string) {
     setCountry(code)
-    setSelectedYear(SANCTION_EVENTS[code][0].year)
+    setYearRaw(String(SANCTION_EVENTS[code][0].year))
   }
 
   const hasData =
     data !== null && data.some((series) => series.some((point) => point.value !== null))
 
+  function exportCsv(index: number) {
+    if (!data) return
+    downloadCsv(`macroscope-${country}-${CHART_CONFIG[index].indicator}.csv`, [
+      ['year', t(CHART_CONFIG[index].title)],
+      ...data[index].map((point) => [point.year, point.value]),
+    ])
+  }
+
+  async function exportPng(index: number) {
+    try {
+      await downloadChartPng(
+        holders.current[index],
+        `macroscope-${country}-${CHART_CONFIG[index].indicator}.png`,
+        '#0b213e',
+      )
+    } catch (exportError) {
+      console.warn('Chart export failed:', exportError)
+    }
+  }
+
   return (
-    <PageLayout
-      title="Sanctions Impact"
-      subtitle="GDP, trade and investment before and after sanctions"
-    >
+    <PageLayout title={t('nav.sanctions')} subtitle={t('sanctions.subtitle')}>
       <div className={styles.countries}>
         {SANCTIONED_COUNTRIES.map((code) => (
           <Button
@@ -70,12 +93,12 @@ export default function SanctionsPage() {
             variant={code === country ? 'accent' : 'secondary'}
             onClick={() => selectCountry(code)}
           >
-            {countryName(code)}
+            {nameOf(code)}
           </Button>
         ))}
       </div>
 
-      <Card title="Sanction timeline">
+      <Card title={t('sanctions.timeline')}>
         <div className={styles.timeline}>
           {events.map((event) => (
             <button
@@ -85,27 +108,25 @@ export default function SanctionsPage() {
                   ? `${styles.event} ${styles.eventSelected}`
                   : styles.event
               }
-              onClick={() => setSelectedYear(event.year)}
+              onClick={() => setYearRaw(String(event.year))}
             >
               <span className={styles.eventYear}>{event.year}</span>
               <span className={styles.eventBody}>
-                <span className={styles.eventTitle}>{event.title}</span>
-                <span className={styles.eventText}>{event.description}</span>
+                <span className={styles.eventTitle}>{event.title[lang]}</span>
+                <span className={styles.eventText}>{event.description[lang]}</span>
               </span>
             </button>
           ))}
         </div>
-        <p className={styles.hint}>
-          Select an event to compare the three years before it with the three years after it.
-        </p>
+        <p className={styles.hint}>{t('sanctions.hint')}</p>
       </Card>
 
       {loading ? (
-        <LoadingState label={`Loading data for ${countryName(country)}`} />
+        <LoadingState label={t('sanctions.loading', { country: countryLabel })} />
       ) : error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !hasData ? (
-        <EmptyState message={`No indicator data available for ${countryName(country)}`} />
+        <EmptyState message={t('sanctions.empty', { country: countryLabel })} />
       ) : data ? (
         <>
           <div className={styles.stats}>
@@ -114,16 +135,20 @@ export default function SanctionsPage() {
               const before = windowAverage(points, selectedYear - COMPARE_SPAN, selectedYear - 1)
               const after = windowAverage(points, selectedYear, selectedYear + COMPARE_SPAN - 1)
               const delta = before !== null && after !== null ? after - before : null
+              const format = (value: number | null) =>
+                value === null ? t('common.noData') : `${value.toFixed(1)}${config.unit}`
               return (
-                <Card key={config.title} title={config.title}>
+                <Card key={config.title} title={t(config.title)}>
                   <div className={styles.statRow}>
                     <div className={styles.statCol}>
-                      <span className={styles.statLabel}>3y before {selectedYear}</span>
-                      <span className={styles.statValue}>{formatValue(before, config.unit)}</span>
+                      <span className={styles.statLabel}>
+                        {t('sanctions.before', { year: selectedYear })}
+                      </span>
+                      <span className={styles.statValue}>{format(before)}</span>
                     </div>
                     <div className={styles.statCol}>
-                      <span className={styles.statLabel}>3y after</span>
-                      <span className={styles.statValue}>{formatValue(after, config.unit)}</span>
+                      <span className={styles.statLabel}>{t('sanctions.after')}</span>
+                      <span className={styles.statValue}>{format(after)}</span>
                     </div>
                   </div>
                   {delta !== null ? (
@@ -133,8 +158,9 @@ export default function SanctionsPage() {
                       ) : (
                         <ArrowDownRight size={14} strokeWidth={1.75} />
                       )}
-                      {delta >= 0 ? '+' : ''}
-                      {delta.toFixed(1)} points
+                      {t('sanctions.points', {
+                        value: `${delta >= 0 ? '+' : ''}${delta.toFixed(1)}`,
+                      })}
                     </span>
                   ) : null}
                 </Card>
@@ -143,16 +169,29 @@ export default function SanctionsPage() {
           </div>
 
           {CHART_CONFIG.map((config, index) => (
-            <Card key={config.title} title={`${config.title}, ${countryName(country)}`}>
-              <IndicatorLineChart
-                data={data[index]}
-                unit={config.unit}
-                seriesName={config.title}
-                markers={events.map((event) => ({
-                  year: event.year,
-                  label: String(event.year),
-                }))}
-              />
+            <Card key={config.title} title={`${t(config.title)}, ${countryLabel}`}>
+              <div
+                ref={(node) => {
+                  holders.current[index] = node
+                }}
+              >
+                <IndicatorLineChart
+                  data={data[index]}
+                  unit={config.unit}
+                  seriesName={t(config.title)}
+                  markers={events.map((event) => ({
+                    year: event.year,
+                    label: String(event.year),
+                  }))}
+                />
+              </div>
+              <div className={styles.exportRow}>
+                <span className={styles.chartHint}>
+                  {t('common.whatIsThis')}
+                  <Tooltip text={t(config.desc)} label={t(config.title)} />
+                </span>
+                <ExportBar onCsv={() => exportCsv(index)} onPng={() => exportPng(index)} />
+              </div>
             </Card>
           ))}
         </>

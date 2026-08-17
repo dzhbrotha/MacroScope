@@ -1,18 +1,24 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Globe2 } from 'lucide-react'
 import {
   Card,
   EmptyState,
   ErrorState,
+  ExportBar,
   LoadingState,
   PageLayout,
   Table,
+  Tooltip,
 } from '../../../shared/components'
 import type { TableColumn } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
+import { useQueryState } from '../../../shared/hooks/useQueryState'
 import { getIndicatorForCountries } from '../../../backend/indicators'
 import { INDICATORS } from '../../../backend/constants'
 import { fetchWorldBankCountries, type IndicatorPoint } from '../../../backend/worldbank'
+import { downloadCsv } from '../../../shared/lib/exportData'
+import { useI18n } from '../../../shared/i18n'
+import type { TranslationKey } from '../../../shared/i18n'
 import { computeScores, WEIGHTS } from './index'
 import type { CountryMetrics, ScoredCountry } from './index'
 import styles from './QualityOfLifePage.module.css'
@@ -39,16 +45,17 @@ async function loadMetrics(): Promise<CountryMetrics[]> {
   }))
 }
 
-const BAR_ROWS = [
-  { key: 'gdp', label: 'GDP per capita', weight: WEIGHTS.gdp },
-  { key: 'life', label: 'Life expectancy', weight: WEIGHTS.life },
-  { key: 'inflation', label: 'Price stability', weight: WEIGHTS.inflation },
-  { key: 'unemployment', label: 'Employment', weight: WEIGHTS.unemployment },
-] as const
+const BAR_ROWS: { key: 'gdp' | 'life' | 'inflation' | 'unemployment'; label: TranslationKey; desc: TranslationKey; weight: number }[] = [
+  { key: 'gdp', label: 'quality.barGdp', desc: 'ind.gdpPerCapita.desc', weight: WEIGHTS.gdp },
+  { key: 'life', label: 'quality.barLife', desc: 'ind.lifeExpectancy.desc', weight: WEIGHTS.life },
+  { key: 'inflation', label: 'quality.barInflation', desc: 'ind.inflation.desc', weight: WEIGHTS.inflation },
+  { key: 'unemployment', label: 'quality.barEmployment', desc: 'ind.unemployment.desc', weight: WEIGHTS.unemployment },
+]
 
 export default function QualityOfLifePage() {
+  const { t } = useI18n()
   const { data, loading, error, reload } = useAsyncData(loadMetrics, [])
-  const [selectedCode, setSelectedCode] = useState<string | null>(null)
+  const [selectedCode, setSelectedCode] = useQueryState('country', '')
 
   const result = useMemo(() => (data ? computeScores(data) : null), [data])
   const selected: ScoredCountry | null = result
@@ -56,10 +63,10 @@ export default function QualityOfLifePage() {
     : null
 
   const columns: TableColumn<ScoredCountry>[] = [
-    { key: 'rank', header: 'Rank', render: (row) => row.rank },
+    { key: 'rank', header: t('quality.rank'), render: (row) => row.rank },
     {
       key: 'name',
-      header: 'Country',
+      header: t('common.country'),
       render: (row) => (
         <button className={styles.countryLink} onClick={() => setSelectedCode(row.code)}>
           {row.name}
@@ -68,75 +75,104 @@ export default function QualityOfLifePage() {
     },
     {
       key: 'score',
-      header: 'Score',
+      header: t('quality.score'),
       align: 'right',
       render: (row) => <span className={styles.score}>{row.score.toFixed(1)}</span>,
     },
     {
       key: 'gdp',
-      header: 'GDP per capita',
+      header: t('ind.gdpPerCapita'),
       align: 'right',
       render: (row) => `$${Math.round(row.gdpPerCapita as number).toLocaleString('en-US')}`,
     },
     {
       key: 'life',
-      header: 'Life expectancy',
+      header: t('ind.lifeExpectancy'),
       align: 'right',
-      render: (row) => `${(row.lifeExpectancy as number).toFixed(1)}y`,
+      render: (row) => `${(row.lifeExpectancy as number).toFixed(1)}`,
     },
     {
       key: 'inflation',
-      header: 'Inflation',
+      header: t('ind.inflation'),
       align: 'right',
       render: (row) => `${(row.inflation as number).toFixed(1)}%`,
     },
     {
       key: 'unemployment',
-      header: 'Unemployment',
+      header: t('ind.unemployment'),
       align: 'right',
       render: (row) => `${(row.unemployment as number).toFixed(1)}%`,
     },
   ]
 
+  function exportCsv() {
+    if (!result) return
+    downloadCsv('macroscope-quality-of-life.csv', [
+      [
+        t('quality.rank'),
+        t('common.country'),
+        t('quality.score'),
+        t('ind.gdpPerCapita'),
+        t('ind.lifeExpectancy'),
+        t('ind.inflation'),
+        t('ind.unemployment'),
+      ],
+      ...result.scored.map((row) => [
+        row.rank,
+        row.name,
+        row.score,
+        row.gdpPerCapita,
+        row.lifeExpectancy,
+        row.inflation,
+        row.unemployment,
+      ]),
+    ])
+  }
+
   return (
-    <PageLayout
-      title="Quality of Life Index"
-      subtitle="A composite index built from open World Bank indicators"
-    >
+    <PageLayout title={t('nav.quality')} subtitle={t('quality.subtitle')}>
       {loading ? (
-        <LoadingState label="Building the index from World Bank data, the first load can take a minute" />
+        <LoadingState label={t('quality.loading')} />
       ) : error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !result || result.scored.length === 0 ? (
-        <EmptyState icon={Globe2} message="Not enough country data to build the index" />
+        <EmptyState icon={Globe2} message={t('quality.empty')} />
       ) : (
         <>
-          <Card title={`Ranking, ${result.scored.length} countries`}>
-            <Table
-              columns={columns}
-              rows={result.scored}
-              rowKey={(row) => row.code}
-            />
+          <Card title={t('quality.ranking', { count: result.scored.length })}>
+            <Table columns={columns} rows={result.scored} rowKey={(row) => row.code} />
             {result.excluded.length > 0 ? (
               <p className={styles.note}>
-                Excluded for missing data: {result.excluded.join(', ')}
+                {t('quality.excluded', { list: result.excluded.slice(0, 12).join(', ') })}
               </p>
             ) : null}
+            <div className={styles.exportRow}>
+              <ExportBar onCsv={exportCsv} />
+            </div>
           </Card>
 
           {selected ? (
-            <Card title={`${selected.name}: rank ${selected.rank} of ${result.scored.length}`}>
+            <Card
+              title={t('quality.rankOf', {
+                country: selected.name,
+                rank: selected.rank,
+                total: result.scored.length,
+              })}
+            >
               <div className={styles.detailScore}>
                 <span className={styles.detailValue}>{selected.score.toFixed(1)}</span>
-                <span className={styles.detailLabel}>composite score out of 100</span>
+                <span className={styles.detailLabel}>{t('quality.composite')}</span>
               </div>
               <div className={styles.bars}>
                 {BAR_ROWS.map((bar) => (
                   <div key={bar.key} className={styles.barRow}>
                     <span className={styles.barLabel}>
-                      {bar.label}
+                      <span>
+                        {t(bar.label)}
+                        <Tooltip text={t(bar.desc)} label={t(bar.label)} />
+                      </span>
                       <span className={styles.barWeight}>
-                        {Math.round(bar.weight * 100)}% weight
+                        {t('quality.weight', { percent: Math.round(bar.weight * 100) })}
                       </span>
                     </span>
                     <div className={styles.track}>
@@ -154,16 +190,8 @@ export default function QualityOfLifePage() {
             </Card>
           ) : null}
 
-          <Card title="Methodology">
-            <p className={styles.method}>
-              The index takes the latest World Bank value for four indicators. GDP per capita
-              uses a log scale so very rich countries do not flatten everyone else. Each
-              indicator is normalized to a 0 to 100 range across the ranked countries. Lower is
-              better for inflation and unemployment, so those scales are inverted, and inflation
-              is capped at 30% so hyperinflation outliers do not distort the scale. The composite
-              score is a weighted sum: GDP per capita 30%, life expectancy 30%, price stability
-              20%, employment 20%. This is an educational index, not an official statistic.
-            </p>
+          <Card title={t('quality.methodology')}>
+            <p className={styles.method}>{t('quality.methodologyText')}</p>
           </Card>
         </>
       )}

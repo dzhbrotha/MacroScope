@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
 import { Aurora } from './shared/components'
 import { AuthProvider } from './app/auth/AuthProvider'
+import { I18nProvider } from './shared/i18n'
 import './index.css'
 
 const pageFallback = (
@@ -24,10 +25,12 @@ const pageFallback = (
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Aurora />
-    <AuthProvider>
-      <Suspense fallback={pageFallback}>
-        <RouterProvider router={router} />
-      </Suspense>
-    </AuthProvider>
+    <I18nProvider>
+      <AuthProvider>
+        <Suspense fallback={pageFallback}>
+          <RouterProvider router={router} />
+        </Suspense>
+      </AuthProvider>
+    </I18nProvider>
   </StrictMode>,
 )

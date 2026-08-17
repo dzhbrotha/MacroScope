@@ -1,26 +1,25 @@
 import { Card, PageLayout } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
 import { getAiHistory } from '../../../backend/ai'
+import { useI18n } from '../../../shared/i18n'
 import styles from './AiExplainerPage.module.css'
 
 export default function AiExplainerPage() {
+  const { t } = useI18n()
   const history = useAsyncData(() => getAiHistory(), [])
 
   return (
-    <PageLayout
-      title="AI Crisis Explainer"
-      subtitle="Pick a crisis or ask your own question, AI answers in plain language"
-    >
-      <Card title="AI module — inactive">
-        <p className={styles.answer}>The AI Crisis Explainer is present in the product but inactive until the secure Anthropic integration is configured. No API key is required for MacroScope to work.</p>
-        <p className={styles.empty}>When enabled, this module will explain causes, mechanics, and consequences in plain language.</p>
+    <PageLayout title={t('nav.ai')} subtitle={t('ai.subtitle')}>
+      <Card title={t('ai.inactiveTitle')}>
+        <p className={styles.answer}>{t('ai.inactiveBody')}</p>
+        <p className={styles.empty}>{t('ai.inactiveHint')}</p>
       </Card>
 
-      <Card title="Your recent questions">
+      <Card title={t('ai.history')}>
         {history.loading ? (
-          <p className={styles.empty}>Loading history</p>
+          <p className={styles.empty}>{t('common.loading')}</p>
         ) : !history.data || history.data.length === 0 ? (
-          <p className={styles.empty}>No questions yet. Ask something above.</p>
+          <p className={styles.empty}>{t('ai.historyEmpty')}</p>
         ) : (
           <div className={styles.history}>
             {history.data.map((row) => (
