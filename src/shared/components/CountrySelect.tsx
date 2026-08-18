@@ -8,11 +8,13 @@ interface CountrySelectProps {
   label: string
   value: string
   onChange: (code: string) => void
+  /** Adds a first entry that clears the selection, used by the comparison picker. */
+  emptyLabel?: string
 }
 
 // Searchable country picker. The full World Bank list runs to roughly two
 // hundred entries, so a plain dropdown is no longer usable on its own.
-export default function CountrySelect({ label, value, onChange }: CountrySelectProps) {
+export default function CountrySelect({ label, value, onChange, emptyLabel }: CountrySelectProps) {
   const { countries, nameOf, matches } = useCountries()
   const { t } = useI18n()
   const [open, setOpen] = useState(false)
@@ -48,6 +50,8 @@ export default function CountrySelect({ label, value, onChange }: CountrySelectP
     setQuery('')
   }
 
+  const shown = value ? nameOf(value) : (emptyLabel ?? '')
+
   return (
     <div className={styles.field} ref={wrapRef}>
       <span className={styles.label}>{label}</span>
@@ -58,7 +62,7 @@ export default function CountrySelect({ label, value, onChange }: CountrySelectP
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
       >
-        <span>{nameOf(value)}</span>
+        <span className={value ? undefined : styles.placeholder}>{shown}</span>
         <ChevronDown size={15} strokeWidth={2} />
       </button>
 
@@ -75,6 +79,17 @@ export default function CountrySelect({ label, value, onChange }: CountrySelectP
             />
           </div>
           <div className={styles.list} role="listbox">
+            {emptyLabel && !query.trim() ? (
+              <button
+                type="button"
+                role="option"
+                aria-selected={value === ''}
+                className={value === '' ? `${styles.option} ${styles.selected}` : styles.option}
+                onClick={() => pick('')}
+              >
+                {emptyLabel}
+              </button>
+            ) : null}
             {visible.length === 0 ? (
               <p className={styles.empty}>{t('common.searchEmpty')}</p>
             ) : (

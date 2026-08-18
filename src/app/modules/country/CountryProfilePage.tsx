@@ -12,11 +12,13 @@ import {
 } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
 import { useQueryState } from '../../../shared/hooks/useQueryState'
-import { getIndicator } from '../../../backend/indicators'
+import { getIndicatorForCountries } from '../../../backend/indicators'
 import { INDICATORS } from '../../../backend/constants'
 import { useCountries } from '../../../backend/CountriesProvider'
 import type { IndicatorPoint } from '../../../backend/worldbank'
 import IndicatorLineChart from '../../../shared/charts/IndicatorLineChart'
+import MultiLineChart from '../../../shared/charts/MultiLineChart'
+import { SERIES_COLORS } from '../../../shared/charts/chartStyle'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
 import { buildInsights } from '../../../shared/lib/insights'
 import { useI18n } from '../../../shared/i18n'
@@ -34,6 +36,14 @@ const CARDS: { key: string; code: string; label: TranslationKey; desc: Translati
   { key: 'tradePercentGdp', code: INDICATORS.tradePercentGdp, label: 'ind.trade', desc: 'ind.trade.desc', unit: 'percent' },
 ]
 
+const CHARTS: { key: string; title: TranslationKey; unit: string; file: string }[] = [
+  { key: 'gdpPerCapita', title: 'country.chartGdp', unit: '', file: 'gdp-per-capita' },
+  { key: 'inflation', title: 'country.chartInflation', unit: '%', file: 'inflation' },
+  { key: 'unemployment', title: 'country.chartUnemployment', unit: '%', file: 'unemployment' },
+]
+
+type Profile = Record<string, Record<string, IndicatorPoint[]>>
+
 function latestOf(points: IndicatorPoint[] | undefined): IndicatorPoint | null {
   const facts = (points ?? []).filter((point) => point.value !== null)
   return facts.length > 0 ? facts[facts.length - 1] : null
@@ -45,26 +55,52 @@ function formatStat(unit: Unit, value: number): string {
   return `${value.toFixed(1)}%`
 }
 
-async function loadProfile(countryCode: string): Promise<Record<string, IndicatorPoint[]>> {
-  const series = await Promise.all(CARDS.map((card) => getIndicator(countryCode, card.code)))
+function formatDelta(unit: Unit, value: number): string {
+  const sign = value >= 0 ? '+' : '-'
+  const size = Math.abs(value)
+  if (unit === 'usd') return `${sign}$${Math.round(size).toLocaleString('en-US')}`
+  if (unit === 'years') return `${sign}${size.toFixed(1)}`
+  return `${sign}${size.toFixed(1)} pp`
+}
+
+async function loadProfile(codes: string[]): Promise<Profile> {
+  const series = await Promise.all(
+    CARDS.map((card) => getIndicatorForCountries(codes, card.code)),
+  )
   return Object.fromEntries(CARDS.map((card, index) => [card.key, series[index]]))
 }
 
 interface ChartCardProps {
   title: string
-  points: IndicatorPoint[]
+  primary: { name: string; points: IndicatorPoint[] }
+  secondary: { name: string; points: IndicatorPoint[] } | null
   unit: string
-  seriesName: string
   fileBase: string
 }
 
-function ChartCard({ title, points, unit, seriesName, fileBase }: ChartCardProps) {
+function ChartCard({ title, primary, secondary, unit, fileBase }: ChartCardProps) {
   const holder = useRef<HTMLDivElement>(null)
 
   function exportCsv() {
+    if (secondary) {
+      const years = new Set<number>()
+      primary.points.forEach((point) => years.add(point.year))
+      secondary.points.forEach((point) => years.add(point.year))
+      downloadCsv(`${fileBase}.csv`, [
+        ['year', primary.name, secondary.name],
+        ...[...years]
+          .sort((a, b) => a - b)
+          .map((year) => [
+            year,
+            primary.points.find((point) => point.year === year)?.value ?? null,
+            secondary.points.find((point) => point.year === year)?.value ?? null,
+          ]),
+      ])
+      return
+    }
     downloadCsv(`${fileBase}.csv`, [
-      ['year', seriesName],
-      ...points.map((point) => [point.year, point.value]),
+      ['year', primary.name],
+      ...primary.points.map((point) => [point.year, point.value]),
     ])
   }
 
@@ -79,7 +115,17 @@ function ChartCard({ title, points, unit, seriesName, fileBase }: ChartCardProps
   return (
     <Card title={title}>
       <div ref={holder}>
-        <IndicatorLineChart data={points} unit={unit} seriesName={seriesName} />
+        {secondary ? (
+          <MultiLineChart
+            series={[
+              { key: 'primary', name: primary.name, color: SERIES_COLORS[0], data: primary.points },
+              { key: 'secondary', name: secondary.name, color: SERIES_COLORS[1], data: secondary.points },
+            ]}
+            unit={unit}
+          />
+        ) : (
+          <IndicatorLineChart data={primary.points} unit={unit} seriesName={primary.name} />
+        )}
       </div>
       <div className={styles.exportRow}>
         <ExportBar onCsv={exportCsv} onPng={exportPng} />
@@ -92,24 +138,37 @@ export default function CountryProfilePage() {
   const { t } = useI18n()
   const { nameOf } = useCountries()
   const [countryCode, setCountryCode] = useQueryState('country', 'KAZ')
+  const [compareCode, setCompareCode] = useQueryState('compare', '')
+  const comparing = compareCode !== '' && compareCode !== countryCode
   const countryLabel = nameOf(countryCode)
+  const compareLabel = comparing ? nameOf(compareCode) : ''
+  const codes = comparing ? [countryCode, compareCode] : [countryCode]
 
   const { data, loading, error, reload } = useAsyncData(
-    () => loadProfile(countryCode),
-    [countryCode],
+    () => loadProfile(codes),
+    [codes.join('|')],
   )
 
   const hasData =
-    data !== null && Object.values(data).some((series) => latestOf(series) !== null)
+    data !== null &&
+    Object.values(data).some((byCountry) => latestOf(byCountry[countryCode]) !== null)
 
   const insights = data
-    ? buildInsights(data.inflation ?? [], t, { format: (value) => `${value.toFixed(1)}%` })
+    ? buildInsights(data.inflation?.[countryCode] ?? [], t, {
+        format: (value) => `${value.toFixed(1)}%`,
+      })
     : []
 
   return (
     <PageLayout title={t('nav.country')} subtitle={t('country.subtitle')}>
       <div className={styles.controls}>
         <CountrySelect label={t('common.country')} value={countryCode} onChange={setCountryCode} />
+        <CountrySelect
+          label={t('country.compare')}
+          value={comparing ? compareCode : ''}
+          onChange={setCompareCode}
+          emptyLabel={t('country.compareNone')}
+        />
       </div>
 
       {loading ? (
@@ -122,7 +181,10 @@ export default function CountryProfilePage() {
         <>
           <div className={styles.stats}>
             {CARDS.map((card) => {
-              const latest = latestOf(data[card.key])
+              const latest = latestOf(data[card.key]?.[countryCode])
+              const other = comparing ? latestOf(data[card.key]?.[compareCode]) : null
+              const delta =
+                latest && other ? (latest.value as number) - (other.value as number) : null
               return (
                 <div key={card.key} className={styles.stat}>
                   <span className={styles.statLabel}>
@@ -130,10 +192,28 @@ export default function CountryProfilePage() {
                     <Tooltip text={t(card.desc)} label={t(card.label)} />
                   </span>
                   <span className={styles.statValue}>
-                    {latest === null ? t('common.noData') : formatStat(card.unit, latest.value as number)}
+                    {latest === null
+                      ? t('common.noData')
+                      : formatStat(card.unit, latest.value as number)}
                   </span>
-                  {latest === null ? null : (
-                    <span className={styles.statHint}>{t('common.latest', { year: latest.year })}</span>
+                  {comparing ? (
+                    <span className={styles.compareRow}>
+                      <span className={styles.compareName}>{compareLabel}</span>
+                      <span className={styles.compareValue}>
+                        {other === null
+                          ? t('common.noData')
+                          : formatStat(card.unit, other.value as number)}
+                      </span>
+                      {delta === null ? null : (
+                        <span className={delta >= 0 ? styles.deltaUp : styles.deltaDown}>
+                          {formatDelta(card.unit, delta)}
+                        </span>
+                      )}
+                    </span>
+                  ) : latest === null ? null : (
+                    <span className={styles.statHint}>
+                      {t('common.latest', { year: latest.year })}
+                    </span>
                   )}
                 </div>
               )
@@ -144,27 +224,24 @@ export default function CountryProfilePage() {
             <InsightList title={t('common.insights')} items={insights} />
           ) : null}
 
-          <ChartCard
-            title={t('country.chartGdp', { country: countryLabel })}
-            points={data.gdpPerCapita ?? []}
-            unit=""
-            seriesName={t('ind.gdpPerCapita')}
-            fileBase={`macroscope-${countryCode}-gdp-per-capita`}
-          />
-          <ChartCard
-            title={t('country.chartInflation', { country: countryLabel })}
-            points={data.inflation ?? []}
-            unit="%"
-            seriesName={t('ind.inflation')}
-            fileBase={`macroscope-${countryCode}-inflation`}
-          />
-          <ChartCard
-            title={t('country.chartUnemployment', { country: countryLabel })}
-            points={data.unemployment ?? []}
-            unit="%"
-            seriesName={t('ind.unemployment')}
-            fileBase={`macroscope-${countryCode}-unemployment`}
-          />
+          {CHARTS.map((chart) => (
+            <ChartCard
+              key={chart.key}
+              title={
+                comparing
+                  ? `${t(chart.title, { country: countryLabel })} · ${compareLabel}`
+                  : t(chart.title, { country: countryLabel })
+              }
+              primary={{ name: countryLabel, points: data[chart.key]?.[countryCode] ?? [] }}
+              secondary={
+                comparing
+                  ? { name: compareLabel, points: data[chart.key]?.[compareCode] ?? [] }
+                  : null
+              }
+              unit={chart.unit}
+              fileBase={`macroscope-${countryCode}${comparing ? '-vs-' + compareCode : ''}-${chart.file}`}
+            />
+          ))}
         </>
       )}
     </PageLayout>
