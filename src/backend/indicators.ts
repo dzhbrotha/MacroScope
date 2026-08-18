@@ -4,64 +4,103 @@
 // If the API fails but a stale cache row exists, return the stale data.
 
 import { supabase } from './supabaseClient'
-import { fetchIndicatorFromApi } from './worldbank'
+import { fetchIndicatorForCountriesFromApi, fetchIndicatorFromApi } from './worldbank'
 import type { IndicatorPoint } from './worldbank'
 
 const CACHE_MAX_AGE_DAYS = 30
+const UPSERT_CHUNK = 50
+
+function isFresh(fetchedAt: string): boolean {
+  return (Date.now() - new Date(fetchedAt).getTime()) / 86_400_000 < CACHE_MAX_AGE_DAYS
+}
+
+async function writeCache(
+  indicatorCode: string,
+  series: Record<string, IndicatorPoint[]>,
+): Promise<void> {
+  const rows = Object.entries(series)
+    .filter(([, points]) => points.length > 0)
+    .map(([countryCode, points]) => ({
+      country_code: countryCode,
+      indicator_code: indicatorCode,
+      data: points,
+      fetched_at: new Date().toISOString(),
+    }))
+
+  for (let start = 0; start < rows.length; start += UPSERT_CHUNK) {
+    const chunk = rows.slice(start, start + UPSERT_CHUNK)
+    try {
+      const { error } = await supabase
+        .from('indicator_cache')
+        .upsert(chunk, { onConflict: 'country_code,indicator_code' })
+      if (error) {
+        console.warn('Indicator cache write failed:', error.message)
+        return
+      }
+    } catch (error) {
+      console.warn('Indicator cache write failed:', error)
+      return
+    }
+  }
+}
 
 export async function getIndicator(
   countryCode: string,
   indicatorCode: string,
 ): Promise<IndicatorPoint[]> {
-  const { data: cached } = await supabase
-    .from('indicator_cache')
-    .select('data, fetched_at')
-    .eq('country_code', countryCode)
-    .eq('indicator_code', indicatorCode)
-    .maybeSingle()
-
-  if (cached) {
-    const ageDays = (Date.now() - new Date(cached.fetched_at).getTime()) / 86_400_000
-    if (ageDays < CACHE_MAX_AGE_DAYS) {
-      return cached.data as IndicatorPoint[]
-    }
-  }
-
-  let points: IndicatorPoint[]
-  try {
-    points = await fetchIndicatorFromApi(countryCode, indicatorCode)
-  } catch (error) {
-    if (cached) return cached.data as IndicatorPoint[]
-    throw error
-  }
-
-  const { error: cacheError } = await supabase.from('indicator_cache').upsert(
-    {
-      country_code: countryCode,
-      indicator_code: indicatorCode,
-      data: points,
-      fetched_at: new Date().toISOString(),
-    },
-    { onConflict: 'country_code,indicator_code' },
-  )
-  if (cacheError) {
-    console.warn('Indicator cache write failed:', cacheError.message)
-  }
-
-  return points
+  const series = await getIndicatorForCountries([countryCode], indicatorCode)
+  return series[countryCode] ?? []
 }
 
+// One cache query and one API request for the whole list, rather than a pair
+// per country. Building the quality of life index used to mean hundreds of
+// round trips; it is now four.
 export async function getIndicatorForCountries(
   countryCodes: string[],
   indicatorCode: string,
 ): Promise<Record<string, IndicatorPoint[]>> {
-  const results = await Promise.all(countryCodes.map(async (code) => {
-    try {
-      return await getIndicator(code, indicatorCode)
-    } catch (error) {
-      console.warn(`Indicator unavailable for ${code}/${indicatorCode}:`, error)
-      return []
+  if (countryCodes.length === 0) return {}
+
+  const fresh: Record<string, IndicatorPoint[]> = {}
+  const stale = new Map<string, IndicatorPoint[]>()
+
+  try {
+    const { data, error } = await supabase
+      .from('indicator_cache')
+      .select('country_code, data, fetched_at')
+      .eq('indicator_code', indicatorCode)
+      .in('country_code', countryCodes)
+
+    if (error) {
+      console.warn('Indicator cache read failed:', error.message)
+    } else {
+      ;(data ?? []).forEach((row) => {
+        const points = row.data as IndicatorPoint[]
+        if (isFresh(row.fetched_at)) fresh[row.country_code] = points
+        else stale.set(row.country_code, points)
+      })
     }
-  }))
-  return Object.fromEntries(countryCodes.map((code, index) => [code, results[index]]))
+  } catch (error) {
+    console.warn('Indicator cache read failed:', error)
+  }
+
+  const missing = countryCodes.filter((code) => !(code in fresh))
+
+  if (missing.length > 0) {
+    try {
+      const fetched = await fetchIndicatorForCountriesFromApi(missing, indicatorCode)
+      Object.assign(fresh, fetched)
+      void writeCache(indicatorCode, fetched)
+    } catch (error) {
+      console.warn(`Indicator unavailable for ${indicatorCode}:`, error)
+      missing.forEach((code) => {
+        fresh[code] = stale.get(code) ?? []
+      })
+    }
+  }
+
+  return Object.fromEntries(countryCodes.map((code) => [code, fresh[code] ?? []]))
 }
+
+// Kept for callers that want to bypass the cache entirely.
+export { fetchIndicatorFromApi }
