@@ -95,6 +95,31 @@
   border-color: var(--color-text);
 }
 
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.menuButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  border-color: var(--color-accent);
+}
+
 .content {
   flex: 1;
   min-width: 0;
@@ -108,13 +133,45 @@
   .sidebar {
     width: 100%;
     height: auto;
-    position: static;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--color-bg);
     border-right: none;
     border-bottom: 1px solid var(--color-border);
+    padding: 14px 16px;
+    gap: var(--space-3);
+  }
+
+  .menuButton {
+    display: inline-flex;
+  }
+
+  /* Collapsed by default: the bar keeps only the logo and the button. */
+  .nav,
+  .bottom {
+    display: none;
   }
 
   .nav {
+    padding-top: 0;
+  }
+
+  .open .nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .open .bottom {
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .open .email {
+    flex: 1;
+    min-width: 0;
   }
 }

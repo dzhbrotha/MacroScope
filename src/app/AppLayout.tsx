@@ -1,5 +1,18 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Scale, TrendingUp, Briefcase, Gauge, Brain, LogOut, House, Globe } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Scale,
+  TrendingUp,
+  Briefcase,
+  Gauge,
+  Brain,
+  LogOut,
+  House,
+  Globe,
+  Menu,
+  X,
+} from 'lucide-react'
 import { signOut } from '../backend/auth'
 import { useAuth } from './auth/AuthProvider'
 import { Logo } from '../shared/components'
@@ -23,6 +36,9 @@ export default function AppLayout() {
   const { session } = useAuth()
   const { t } = useI18n()
   const navigate = useNavigate()
+  // On a phone the eight nav entries filled more than half the screen, so they
+  // collapse behind a button and open on demand.
+  const [menuOpen, setMenuOpen] = useState(false)
 
   async function handleSignOut() {
     navigate('/')
@@ -32,14 +48,28 @@ export default function AppLayout() {
   return (
     <CountriesProvider>
       <div className={styles.shell}>
-        <aside className={styles.sidebar}>
-          <Logo to="/app" />
-          <nav className={styles.nav}>
+        <aside className={menuOpen ? `${styles.sidebar} ${styles.open}` : styles.sidebar}>
+          <div className={styles.head}>
+            <Logo to="/app" />
+            <button
+              type="button"
+              className={styles.menuButton}
+              aria-expanded={menuOpen}
+              aria-controls="app-nav"
+              aria-label={t('nav.menu')}
+              onClick={() => setMenuOpen((current) => !current)}
+            >
+              {menuOpen ? <X size={18} strokeWidth={2} /> : <Menu size={18} strokeWidth={2} />}
+            </button>
+          </div>
+
+          <nav className={styles.nav} id="app-nav">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
+                onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
                 }
@@ -49,6 +79,7 @@ export default function AppLayout() {
               </NavLink>
             ))}
           </nav>
+
           <div className={styles.bottom}>
             <LanguageSwitcher />
             <span className={styles.email}>{session?.user.email}</span>
@@ -58,6 +89,7 @@ export default function AppLayout() {
             </button>
           </div>
         </aside>
+
         <main className={styles.content}>
           <Outlet />
         </main>
