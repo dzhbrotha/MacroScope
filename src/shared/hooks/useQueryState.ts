@@ -49,6 +49,11 @@ function queueSeed(key: string, value: string, setParams: SetURLSearchParams) {
   })
 }
 
+// Lets a page outside the module read the last remembered choice.
+export function readQueryState(key: string, fallback: string): string {
+  return readStored(key) ?? fallback
+}
+
 export function useQueryState(key: string, fallback: string) {
   const [params, setParams] = useSearchParams()
   const fromUrl = params.get(key)
