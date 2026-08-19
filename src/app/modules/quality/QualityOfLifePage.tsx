@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { Globe2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Globe2, Search } from 'lucide-react'
 import {
   Card,
   EmptyState,
@@ -16,6 +16,7 @@ import { useQueryState } from '../../../shared/hooks/useQueryState'
 import { getIndicatorForCountries } from '../../../backend/indicators'
 import { INDICATORS } from '../../../backend/constants'
 import { fetchWorldBankCountries, type IndicatorPoint } from '../../../backend/worldbank'
+import { useCountries } from '../../../backend/CountriesProvider'
 import { downloadCsv } from '../../../shared/lib/exportData'
 import { useI18n } from '../../../shared/i18n'
 import type { TranslationKey } from '../../../shared/i18n'
@@ -54,10 +55,25 @@ const BAR_ROWS: { key: 'gdp' | 'life' | 'inflation' | 'unemployment'; label: Tra
 
 export default function QualityOfLifePage() {
   const { t } = useI18n()
+  const { nameOf } = useCountries()
   const { data, loading, error, reload } = useAsyncData(loadMetrics, [])
+  const [query, setQuery] = useState('')
   const [selectedCode, setSelectedCode] = useQueryState('country', '')
 
   const result = useMemo(() => (data ? computeScores(data) : null), [data])
+  // 177 rows with no way to find your own country was the main complaint here.
+  const rows = useMemo(() => {
+    if (!result) return []
+    const needle = query.trim().toLowerCase()
+    if (!needle) return result.scored
+    return result.scored.filter(
+      (row) =>
+        nameOf(row.code).toLowerCase().includes(needle) ||
+        row.name.toLowerCase().includes(needle) ||
+        row.code.toLowerCase().includes(needle),
+    )
+  }, [result, query, nameOf])
+
   const selected: ScoredCountry | null = result
     ? (result.scored.find((row) => row.code === selectedCode) ?? result.scored[0] ?? null)
     : null
@@ -69,7 +85,7 @@ export default function QualityOfLifePage() {
       header: t('common.country'),
       render: (row) => (
         <button className={styles.countryLink} onClick={() => setSelectedCode(row.code)}>
-          {row.name}
+          {nameOf(row.code)}
         </button>
       ),
     },
@@ -140,7 +156,23 @@ export default function QualityOfLifePage() {
       ) : (
         <>
           <Card title={t('quality.ranking', { count: result.scored.length })}>
-            <Table columns={columns} rows={result.scored} rowKey={(row) => row.code} />
+            <div className={styles.searchRow}>
+              <Search size={15} strokeWidth={2} className={styles.searchIcon} />
+              <input
+                className={styles.search}
+                value={query}
+                placeholder={t('quality.filter')}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+              <span className={styles.count}>
+                {t('quality.shown', { shown: rows.length, total: result.scored.length })}
+              </span>
+            </div>
+            {rows.length === 0 ? (
+              <p className={styles.note}>{t('common.searchEmpty')}</p>
+            ) : (
+              <Table columns={columns} rows={rows} rowKey={(row) => row.code} />
+            )}
             {result.excluded.length > 0 ? (
               <p className={styles.note}>
                 {t('quality.excluded', { list: result.excluded.slice(0, 12).join(', ') })}
@@ -154,7 +186,7 @@ export default function QualityOfLifePage() {
           {selected ? (
             <Card
               title={t('quality.rankOf', {
-                country: selected.name,
+                country: nameOf(selected.code),
                 rank: selected.rank,
                 total: result.scored.length,
               })}

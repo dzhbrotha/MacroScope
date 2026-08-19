@@ -20,6 +20,7 @@ import IndicatorLineChart from '../../../shared/charts/IndicatorLineChart'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
 import { useI18n } from '../../../shared/i18n'
 import type { TranslationKey } from '../../../shared/i18n'
+import BeforeAfterChart from './BeforeAfterChart'
 import { SANCTIONED_COUNTRIES, SANCTION_EVENTS } from './data'
 import styles from './SanctionsPage.module.css'
 
@@ -129,6 +130,23 @@ export default function SanctionsPage() {
         <EmptyState message={t('sanctions.empty', { country: countryLabel })} />
       ) : data ? (
         <>
+          {(() => {
+            const paired = CHART_CONFIG.map((config, index) => ({
+              name: t(config.title),
+              before: windowAverage(data[index], selectedYear - COMPARE_SPAN, selectedYear - 1),
+              after: windowAverage(data[index], selectedYear, selectedYear + COMPARE_SPAN - 1),
+            }))
+            return paired.some((row) => row.before !== null || row.after !== null) ? (
+              <Card title={t('sanctions.chart')}>
+                <BeforeAfterChart
+                  rows={paired}
+                  beforeLabel={t('sanctions.before', { year: selectedYear })}
+                  afterLabel={t('sanctions.after')}
+                />
+              </Card>
+            ) : null
+          })()}
+
           <div className={styles.stats}>
             {CHART_CONFIG.map((config, index) => {
               const points = data[index]

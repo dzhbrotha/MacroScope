@@ -113,6 +113,9 @@ export const en = {
   'quality.barLife': 'Life expectancy',
   'quality.barInflation': 'Price stability',
   'quality.barEmployment': 'Employment',
+  'quality.filter': 'Find a country in the ranking',
+  'quality.shown': '{shown} of {total}',
+  'sanctions.chart': 'Before and after, side by side',
 
   'country.subtitle': 'All the key indicators for one country in a single view',
   'country.loading': 'Loading the profile for {country}',
@@ -373,6 +376,9 @@ export const ru: Record<TranslationKey, string> = {
   'quality.barLife': 'Продолжительность жизни',
   'quality.barInflation': 'Стабильность цен',
   'quality.barEmployment': 'Занятость',
+  'quality.filter': 'Найти страну в рейтинге',
+  'quality.shown': '{shown} из {total}',
+  'sanctions.chart': 'До и после, рядом',
 
   'country.subtitle': 'Все ключевые показатели одной страны в одном экране',
   'country.loading': 'Загружаем профиль: {country}',

@@ -1,17 +1,36 @@
 // The single chart palette for the whole project.
-// Hex values mirror tokens.css: SVG attributes cannot resolve CSS variables.
+//
+// Recharts needs concrete values for SVG attributes, so the palette is resolved
+// from the design tokens once at load time instead of being copied by hand.
+// The literals below are only the fallback for a non browser environment; when
+// tokens.css changes, the charts follow automatically.
+
+function token(name: string, fallback: string): string {
+  if (typeof document === 'undefined') return fallback
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+  return value || fallback
+}
 
 export const CHART = {
-  axis: '#8b90a5',
-  grid: '#20243a',
-  accent: '#4d7cff',
-  accentSoft: '#9bb3ff',
-  surface: '#10101c',
-  text: '#f2f3f8',
+  axis: token('--color-text-muted', '#9bb0ca'),
+  grid: token('--color-border', '#244363'),
+  accent: token('--color-accent', '#5b8cff'),
+  accentSoft: token('--color-accent-hover', '#82a8ff'),
+  cyan: token('--color-cyan', '#7ed8e8'),
+  surface: token('--color-surface', '#0b213e'),
+  bg: token('--color-bg', '#06152a'),
+  text: token('--color-text', '#f5f8ff'),
+  error: token('--color-error', '#ff7180'),
 } as const
 
 // Distinguishable line colors for multi country charts, night sky family.
-export const SERIES_COLORS = ['#4d7cff', '#9bb3ff', '#f2f3f8', '#8b90a5', '#3350c9'] as const
+export const SERIES_COLORS = [
+  CHART.accent,
+  CHART.cyan,
+  CHART.text,
+  CHART.axis,
+  '#3a63c9',
+] as const
 
 export const TOOLTIP_STYLE = {
   background: CHART.surface,
