@@ -1,1 +1,25 @@
-.logo{display:inline-flex;align-items:center;gap:10px;color:var(--color-text);text-decoration:none}.name{font:600 16px var(--font-heading);letter-spacing:-.04em}.mark{height:22px;width:22px;display:flex;align-items:flex-end;gap:2px;border-bottom:2px solid var(--color-text);padding:0 2px 2px}.mark i{display:block;width:4px;background:var(--color-accent);transform:skew(-18deg)}.mark i:nth-child(1){height:8px}.mark i:nth-child(2){height:14px}.mark i:nth-child(3){height:19px}.logo:focus-visible{outline:2px solid var(--color-accent);outline-offset:5px}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.mark {
+  height: 20px;
+  width: auto;
+  flex-shrink: 0;
+  color: var(--color-accent);
+  overflow: visible;
+}
+
+.name {
+  font: 600 17px var(--font-heading);
+  letter-spacing: -0.04em;
+}
+
+.logo:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 5px;
+}
