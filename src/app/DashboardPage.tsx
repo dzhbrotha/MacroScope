@@ -1,6 +1,16 @@
 import { Link } from 'react-router-dom'
-import { Scale, TrendingUp, Briefcase, Gauge, Brain, House, Globe, ArrowRight } from 'lucide-react'
-import { PageLayout } from '../shared/components'
+import {
+  Scale,
+  TrendingUp,
+  Briefcase,
+  Gauge,
+  Brain,
+  House,
+  Globe,
+  LayoutGrid,
+  ArrowRight,
+} from 'lucide-react'
+import { PageLayout, Skeleton } from '../shared/components'
 import { useAsyncData } from '../shared/hooks/useAsyncData'
 import { readQueryState } from '../shared/hooks/useQueryState'
 import { getIndicatorForCountries } from '../backend/indicators'
@@ -12,6 +22,7 @@ import type { TranslationKey } from '../shared/i18n'
 import styles from './DashboardPage.module.css'
 
 const modules: { to: string; icon: typeof Scale; title: TranslationKey; text: TranslationKey }[] = [
+  { to: '/app/board', icon: LayoutGrid, title: 'nav.board', text: 'dash.board' },
   { to: '/app/sanctions', icon: Scale, title: 'nav.sanctions', text: 'dash.sanctions' },
   { to: '/app/inflation', icon: TrendingUp, title: 'nav.inflation', text: 'dash.inflation' },
   { to: '/app/unemployment', icon: Briefcase, title: 'nav.unemployment', text: 'dash.unemployment' },
@@ -45,7 +56,7 @@ export default function DashboardPage() {
   // whichever country the reader looked at last.
   const country = readQueryState('country', 'KAZ')
 
-  const { data } = useAsyncData(
+  const { data, loading } = useAsyncData(
     () =>
       Promise.all(SNAPSHOT.map((item) => getIndicatorForCountries([country], item.code))).then(
         (series) =>
@@ -64,7 +75,9 @@ export default function DashboardPage() {
 
   return (
     <PageLayout title={t('dash.title')} subtitle={t('dash.subtitle')}>
-      {snapshot.length > 0 ? (
+      {loading && snapshot.length === 0 ? (
+        <Skeleton height={104} />
+      ) : snapshot.length > 0 ? (
         <section className={styles.snapshot}>
           <div className={styles.snapshotHead}>
             <span className={styles.snapshotKicker}>{t('dash.snapshot')}</span>
@@ -81,17 +94,20 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-          <Link to={`/app/country?country=${country}`} className={styles.snapshotLink}>
-            {t('dash.openProfile')}
+          <Link to={`/app/board?country=${country}`} className={styles.snapshotLink}>
+            {t('dash.openBoard')}
             <ArrowRight size={14} strokeWidth={1.75} />
           </Link>
         </section>
       ) : null}
 
       <div className={styles.grid}>
-        {modules.map((module) => (
+        {modules.map((module, index) => (
           <Link key={module.to} to={module.to} className={styles.card}>
-            <module.icon className={styles.icon} size={22} strokeWidth={1.5} />
+            <span className={styles.cardHead}>
+              <module.icon className={styles.icon} size={20} strokeWidth={1.5} />
+              <span className={styles.index}>{String(index + 1).padStart(2, '0')}</span>
+            </span>
             <h3 className={styles.title}>{t(module.title)}</h3>
             <p className={styles.text}>{t(module.text)}</p>
             <span className={styles.open}>

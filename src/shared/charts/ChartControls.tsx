@@ -24,6 +24,8 @@ interface ChartControlsProps {
   onUnits?: (value: UnitsKey) => void
   /** The year the index is rebased to, shown under the chart. */
   baseYear?: number | null
+  /** Drops the bottom margin when the controls sit in a toolbar row. */
+  compact?: boolean
 }
 
 export default function ChartControls({
@@ -32,11 +34,12 @@ export default function ChartControls({
   units,
   onUnits,
   baseYear = null,
+  compact = false,
 }: ChartControlsProps) {
   const { t } = useI18n()
 
   return (
-    <div className={styles.wrap}>
+    <div className={compact ? `${styles.wrap} ${styles.compact}` : styles.wrap}>
       <div className={styles.group}>
         <span className={styles.label}>{t('chart.range')}</span>
         <div className={styles.buttons}>

@@ -55,6 +55,7 @@ export default function IndicatorLineChart({
         <Tooltip
           contentStyle={TOOLTIP_STYLE}
           labelStyle={{ color: CHART.axis }}
+          cursor={{ stroke: CHART.axis, strokeDasharray: '3 3' }}
           formatter={(value) => [`${Number(value).toFixed(2)}${unit}`, seriesName]}
           labelFormatter={(label) => String(label)}
         />

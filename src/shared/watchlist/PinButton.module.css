@@ -1,0 +1,34 @@
+.pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 var(--space-4);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font: 13px var(--font-body);
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.pin:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.on {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.pin:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pin:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

@@ -5,8 +5,8 @@ import {
   EmptyState,
   ErrorState,
   ExportBar,
-  LoadingState,
   PageLayout,
+  Skeleton,
   Table,
   Tooltip,
 } from '../../../shared/components'
@@ -148,7 +148,10 @@ export default function QualityOfLifePage() {
   return (
     <PageLayout title={t('nav.quality')} subtitle={t('quality.subtitle')}>
       {loading ? (
-        <LoadingState label={t('quality.loading')} />
+        <div className={styles.loading}>
+          <p className={styles.loadingNote}>{t('quality.loading')}</p>
+          <Skeleton height={54} count={8} />
+        </div>
       ) : error ? (
         <ErrorState message={error} onRetry={reload} />
       ) : !result || result.scored.length === 0 ? (

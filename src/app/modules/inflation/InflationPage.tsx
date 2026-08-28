@@ -21,6 +21,7 @@ import { buildForecastSeries, FORECAST_HORIZON } from './forecast'
 import type { ForecastModel } from './forecast'
 import ForecastChart from './ForecastChart'
 import ChartControls from '../../../shared/charts/ChartControls'
+import { PinButton } from '../../../shared/watchlist'
 import { isRange, startYearOf } from '../../../shared/charts/transform'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
 import { buildInsights } from '../../../shared/lib/insights'
@@ -111,6 +112,7 @@ export default function InflationPage() {
             onChange={setCountryCode}
           />
         </div>
+        <PinButton code={countryCode} />
         <div className={styles.models}>
           <span className={styles.modelsLabel}>{t('inflation.model')}</span>
           <div className={styles.modelButtons}>

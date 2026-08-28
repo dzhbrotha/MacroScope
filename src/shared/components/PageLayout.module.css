@@ -4,19 +4,37 @@
   padding: var(--space-6) var(--space-5);
 }
 
+.wide {
+  max-width: 1280px;
+}
+
 .header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4);
   margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .title {
   margin: 0;
   font-size: 28px;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+}
+
+/* A short accent rule in front of the title. It marks the start of the page
+   without adding a box or a shadow. */
+.title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 0.68em;
+  margin-right: 13px;
+  background: var(--color-accent);
+  vertical-align: baseline;
 }
 
 .subtitle {

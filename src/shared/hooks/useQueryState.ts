@@ -49,6 +49,12 @@ function queueSeed(key: string, value: string, setParams: SetURLSearchParams) {
   })
 }
 
+// Lets a view outside the module record a choice it made through the address
+// bar, so the dashboard still opens on the country the reader last picked.
+export function rememberQueryState(key: string, value: string) {
+  writeStored(key, value)
+}
+
 // Lets a page outside the module read the last remembered choice.
 export function readQueryState(key: string, fallback: string): string {
   return readStored(key) ?? fallback

@@ -26,6 +26,40 @@
   padding: 0 var(--space-2);
 }
 
+.search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 36px;
+  padding: 0 var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font: 13px var(--font-body);
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.search:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.search > span {
+  flex: 1;
+  text-align: left;
+}
+
+.shortcut {
+  font: 10px var(--font-body);
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2px 5px;
+}
+
 .nav {
   display: flex;
   flex-direction: column;
@@ -38,32 +72,43 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 10px var(--space-2);
+  padding: 9px var(--space-3);
   font-size: 14px;
   color: var(--color-text-muted);
   text-decoration: none;
-  border-radius: 0;
-  border-bottom: 1px solid transparent;
+  border-left: 2px solid transparent;
+  transition: color 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.navItem svg {
+  flex-shrink: 0;
+  opacity: 0.75;
 }
 
 .navItem:hover {
   color: var(--color-text);
+  background: var(--color-surface);
 }
 
+/* The current module is marked by a bar on the reading edge rather than a
+   filled pill, which keeps the sidebar quiet. */
 .active {
   color: var(--color-text);
-  background: transparent;
-  border-bottom-color: var(--color-accent);
+  background: var(--color-surface);
+  border-left-color: var(--color-accent);
 }
 
 .active svg {
   color: var(--color-accent);
+  opacity: 1;
 }
 
 .bottom {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
 }
 
 .email {
@@ -148,9 +193,14 @@
   }
 
   /* Collapsed by default: the bar keeps only the logo and the button. */
+  .search,
   .nav,
   .bottom {
     display: none;
+  }
+
+  .open .search {
+    display: flex;
   }
 
   .nav {

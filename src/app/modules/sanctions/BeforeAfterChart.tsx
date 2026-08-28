@@ -1,14 +1,4 @@
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
-import { CHART, TOOLTIP_STYLE } from '../../../shared/charts/chartStyle'
+import styles from './BeforeAfterChart.module.css'
 
 export interface BeforeAfterRow {
   name: string
@@ -20,47 +10,74 @@ interface BeforeAfterChartProps {
   rows: BeforeAfterRow[]
   beforeLabel: string
   afterLabel: string
-  height?: number
 }
 
-// The three indicator cards carry the same numbers, but the fall after a
-// sanction package only reads at a glance as a pair of bars.
+// One grouped bar chart put growth of two percent next to trade of fifty, and
+// the small bars vanished. Each indicator now gets its own row and its own
+// scale, so the drop is readable whatever the size of the number.
+function Bar({
+  label,
+  value,
+  scale,
+  signed,
+  tone,
+}: {
+  label: string
+  value: number | null
+  scale: number
+  signed: boolean
+  tone: 'before' | 'after'
+}) {
+  const share = value === null ? 0 : Math.min(1, Math.abs(value) / scale)
+  const width = `${(signed ? share * 50 : share * 100).toFixed(1)}%`
+  const negative = (value ?? 0) < 0
+
+  return (
+    <div className={styles.row}>
+      <span className={styles.rowLabel}>{label}</span>
+      <span className={signed ? `${styles.track} ${styles.signed}` : styles.track}>
+        <span
+          className={`${styles.fill} ${tone === 'before' ? styles.before : styles.after} ${
+            negative ? styles.negative : ''
+          }`}
+          style={signed ? { width, [negative ? 'right' : 'left']: '50%' } : { width }}
+        />
+      </span>
+      <span className={styles.rowValue}>
+        {value === null ? '' : `${value.toFixed(1)}%`}
+      </span>
+    </div>
+  )
+}
+
 export default function BeforeAfterChart({
   rows,
   beforeLabel,
   afterLabel,
-  height = 280,
 }: BeforeAfterChartProps) {
   return (
-    <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={rows} margin={{ top: 16, right: 16, bottom: 4, left: 0 }}>
-        <CartesianGrid stroke={CHART.grid} vertical={false} />
-        <XAxis
-          dataKey="name"
-          tick={{ fill: CHART.axis, fontSize: 12 }}
-          axisLine={{ stroke: CHART.grid }}
-          tickLine={false}
-        />
-        <YAxis
-          tick={{ fill: CHART.axis, fontSize: 11 }}
-          axisLine={false}
-          tickLine={false}
-          width={48}
-          tickFormatter={(value) => `${value}%`}
-        />
-        <Tooltip
-          contentStyle={TOOLTIP_STYLE}
-          labelStyle={{ color: CHART.axis }}
-          cursor={{ fill: CHART.grid, opacity: 0.25 }}
-          formatter={(value, name) => [`${Number(value).toFixed(1)}%`, String(name)]}
-        />
-        <Legend
-          iconType="square"
-          wrapperStyle={{ fontSize: 12, color: CHART.axis }}
-        />
-        <Bar dataKey="before" name={beforeLabel} fill={CHART.accent} />
-        <Bar dataKey="after" name={afterLabel} fill={CHART.error} />
-      </BarChart>
-    </ResponsiveContainer>
+    <div className={styles.wrap}>
+      {rows.map((row) => {
+        const values = [row.before, row.after].filter((value): value is number => value !== null)
+        const scale = Math.max(...values.map(Math.abs), 0.0001)
+        const signed = values.some((value) => value < 0)
+        const delta =
+          row.before !== null && row.after !== null ? row.after - row.before : null
+        return (
+          <div key={row.name} className={styles.metric}>
+            <header className={styles.head}>
+              <span className={styles.name}>{row.name}</span>
+              {delta === null ? null : (
+                <span className={delta >= 0 ? styles.up : styles.down}>
+                  {`${delta >= 0 ? '+' : '-'}${Math.abs(delta).toFixed(1)} pp`}
+                </span>
+              )}
+            </header>
+            <Bar label={beforeLabel} value={row.before} scale={scale} signed={signed} tone="before" />
+            <Bar label={afterLabel} value={row.after} scale={scale} signed={signed} tone="after" />
+          </div>
+        )
+      })}
+    </div>
   )
 }

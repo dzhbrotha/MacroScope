@@ -47,6 +47,11 @@
   min-width: 240px;
 }
 
+.controls > button {
+  min-width: 0;
+  align-self: flex-end;
+}
+
 .compareRow {
   display: flex;
   flex-wrap: wrap;

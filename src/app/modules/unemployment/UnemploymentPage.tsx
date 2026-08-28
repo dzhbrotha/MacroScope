@@ -180,6 +180,8 @@ export default function UnemploymentPage() {
                   key={item.key}
                   label={`${item.name}, ${latest.year}`}
                   value={`${(latest.value as number).toFixed(1)}%`}
+                  series={item.data}
+                  color={item.color}
                   hint={
                     delta === null || base === null
                       ? undefined

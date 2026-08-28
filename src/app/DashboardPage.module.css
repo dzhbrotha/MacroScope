@@ -5,6 +5,7 @@
 }
 
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -14,11 +15,42 @@
   padding: var(--space-5);
   text-decoration: none;
   color: var(--color-text);
-  transition: border-color 120ms ease;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  bottom: -1px;
+  width: 2px;
+  background: transparent;
+  transition: background 140ms ease;
 }
 
 .card:hover {
-  border-color: var(--color-accent);
+  border-color: color-mix(in srgb, var(--color-accent) 60%, var(--color-border));
+  background: var(--color-surface-2);
+}
+
+.card:hover::before {
+  background: var(--color-accent);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.index {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .icon {
@@ -26,7 +58,7 @@
 }
 
 .title {
-  margin: var(--space-4) 0 var(--space-2);
+  margin: var(--space-5) 0 var(--space-2);
   font-size: 16px;
   font-weight: 600;
 }
@@ -101,6 +133,7 @@
   font-family: var(--font-heading);
   font-size: 22px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .snapshotYear {

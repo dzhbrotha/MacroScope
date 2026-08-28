@@ -1,0 +1,107 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.name {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.up {
+  font-size: 12.5px;
+  color: var(--color-positive);
+  font-variant-numeric: tabular-nums;
+}
+
+.down {
+  font-size: 12.5px;
+  color: var(--color-error);
+  font-variant-numeric: tabular-nums;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 128px 1fr 72px;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rowLabel {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track {
+  position: relative;
+  display: block;
+  height: 18px;
+  background: var(--color-surface-2);
+}
+
+/* When one of the two values is below zero the track needs a middle, so the
+   bars can run either side of it. */
+.signed::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition: width 260ms ease;
+}
+
+.before {
+  background: var(--color-accent);
+}
+
+.after {
+  background: var(--color-cyan);
+}
+
+.negative {
+  opacity: 0.72;
+}
+
+.rowValue {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 92px 1fr 62px;
+    gap: var(--space-2);
+  }
+}

@@ -5,12 +5,20 @@ interface PageLayoutProps {
   title: string
   subtitle?: string
   actions?: ReactNode
+  /** Widens the column for views that place charts side by side. */
+  wide?: boolean
   children: ReactNode
 }
 
-export default function PageLayout({ title, subtitle, actions, children }: PageLayoutProps) {
+export default function PageLayout({
+  title,
+  subtitle,
+  actions,
+  wide = false,
+  children,
+}: PageLayoutProps) {
   return (
-    <div className={styles.page}>
+    <div className={wide ? `${styles.page} ${styles.wide}` : styles.page}>
       <header className={styles.header}>
         <div>
           <h1 className={styles.title}>{title}</h1>

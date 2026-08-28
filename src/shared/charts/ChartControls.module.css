@@ -6,6 +6,10 @@
   margin-bottom: var(--space-4);
 }
 
+.compact {
+  margin-bottom: 0;
+}
+
 .group {
   display: flex;
   align-items: center;

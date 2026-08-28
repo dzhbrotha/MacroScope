@@ -5,6 +5,7 @@ import { Logo } from '../shared/components'
 import { LanguageSwitcher, useI18n } from '../shared/i18n'
 import type { TranslationKey } from '../shared/i18n'
 import buttonStyles from '../shared/components/Button.module.css'
+import ScrollProgress from './ScrollProgress'
 import styles from './LandingPage.module.css'
 
 const modules: { icon: typeof Scale; title: TranslationKey; text: TranslationKey }[] = [
@@ -32,6 +33,7 @@ export default function LandingPage() {
 
   return (
     <div>
+      <ScrollProgress />
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Logo />

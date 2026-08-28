@@ -20,6 +20,7 @@ import IndicatorLineChart from '../../../shared/charts/IndicatorLineChart'
 import MultiLineChart from '../../../shared/charts/MultiLineChart'
 import { SERIES_COLORS } from '../../../shared/charts/chartStyle'
 import ChartControls from '../../../shared/charts/ChartControls'
+import { PinButton } from '../../../shared/watchlist'
 import { applyView, startYearOf, unitFor } from '../../../shared/charts/transform'
 import type { RangeKey, UnitsKey } from '../../../shared/charts/transform'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
@@ -190,6 +191,7 @@ export default function CountryProfilePage() {
           onChange={setCompareCode}
           emptyLabel={t('country.compareNone')}
         />
+        <PinButton code={countryCode} />
       </div>
 
       {loading ? (

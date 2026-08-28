@@ -64,6 +64,7 @@ export default function MultiLineChart({ series, unit = '', height = 320 }: Mult
         <Tooltip
           contentStyle={TOOLTIP_STYLE}
           labelStyle={{ color: CHART.axis }}
+          cursor={{ stroke: CHART.axis, strokeDasharray: '3 3' }}
           formatter={(value, name) => [`${Number(value).toFixed(2)}${unit}`, String(name)]}
           labelFormatter={(label) => String(label)}
         />
