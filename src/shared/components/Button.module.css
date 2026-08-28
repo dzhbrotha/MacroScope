@@ -30,7 +30,7 @@
 }
 
 .primary:hover:not(:disabled) {
-  background: #d9dbe8;
+  background: var(--color-surface-2);
 }
 
 .accent {

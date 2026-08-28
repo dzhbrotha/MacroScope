@@ -20,6 +20,8 @@ import { useCountries } from '../../../backend/CountriesProvider'
 import { buildForecastSeries, FORECAST_HORIZON } from './forecast'
 import type { ForecastModel } from './forecast'
 import ForecastChart from './ForecastChart'
+import ChartControls from '../../../shared/charts/ChartControls'
+import { isRange, startYearOf } from '../../../shared/charts/transform'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
 import { buildInsights } from '../../../shared/lib/insights'
 import { useI18n } from '../../../shared/i18n'
@@ -37,6 +39,8 @@ export default function InflationPage() {
   const [countryCode, setCountryCode] = useQueryState('country', 'KAZ')
   const [modelRaw, setModelRaw] = useQueryState('model', 'linear')
   const model: ForecastModel = modelRaw === 'movingAverage' ? 'movingAverage' : 'linear'
+  const [rangeRaw, setRange] = useQueryState('range', 'all')
+  const range = isRange(rangeRaw) ? rangeRaw : 'all'
   const countryLabel = nameOf(countryCode)
   const chartHolder = useRef<HTMLDivElement>(null)
 
@@ -45,10 +49,13 @@ export default function InflationPage() {
     [countryCode],
   )
 
-  const series = useMemo(
-    () => (data ? buildForecastSeries(data, model) : []),
-    [data, model],
-  )
+  // The forecast is always kept: the range only trims the history in front of it.
+  const series = useMemo(() => {
+    if (!data) return []
+    const full = buildForecastSeries(data, model)
+    const startYear = startYearOf([data], range)
+    return startYear === null ? full : full.filter((point) => point.year >= startYear)
+  }, [data, model, range])
 
   const facts = useMemo(
     () => (data ?? []).filter((point) => point.value !== null),
@@ -87,7 +94,7 @@ export default function InflationPage() {
       await downloadChartPng(
         chartHolder.current,
         `macroscope-${countryCode}-inflation.png`,
-        '#0b213e',
+        '#210b11',
       )
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)
@@ -149,6 +156,7 @@ export default function InflationPage() {
           ) : null}
 
           <Card title={t('inflation.chart', { country: countryLabel })}>
+            <ChartControls range={range} onRange={setRange} />
             <div ref={chartHolder}>
               <ForecastChart
                 data={series}

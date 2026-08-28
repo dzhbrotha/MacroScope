@@ -11,13 +11,15 @@ import {
   Tooltip,
 } from '../../../shared/components'
 import { useAsyncData } from '../../../shared/hooks/useAsyncData'
-import { useQueryStateList } from '../../../shared/hooks/useQueryState'
+import { useQueryState, useQueryStateList } from '../../../shared/hooks/useQueryState'
 import { getIndicatorForCountries } from '../../../backend/indicators'
 import { INDICATORS } from '../../../backend/constants'
 import { useCountries } from '../../../backend/CountriesProvider'
 import type { IndicatorPoint } from '../../../backend/worldbank'
 import MultiLineChart from '../../../shared/charts/MultiLineChart'
 import { SERIES_COLORS } from '../../../shared/charts/chartStyle'
+import ChartControls from '../../../shared/charts/ChartControls'
+import { applyView, isRange, isUnits, startYearOf, unitFor } from '../../../shared/charts/transform'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
 import { useI18n } from '../../../shared/i18n'
 import styles from './UnemploymentPage.module.css'
@@ -34,6 +36,10 @@ export default function UnemploymentPage() {
   const { countries, featured, nameOf, matches } = useCountries()
   const [selected, setSelected] = useQueryStateList('countries', DEFAULT_SELECTED)
   const [query, setQuery] = useState('')
+  const [rangeRaw, setRange] = useQueryState('range', 'all')
+  const [unitsRaw, setUnits] = useQueryState('units', 'level')
+  const range = isRange(rangeRaw) ? rangeRaw : 'all'
+  const units = isUnits(unitsRaw) ? unitsRaw : 'level'
   const chartHolder = useRef<HTMLDivElement>(null)
 
   const { data, loading, error, reload } = useAsyncData(
@@ -63,13 +69,19 @@ export default function UnemploymentPage() {
     setSelected([...selected, code])
   }
 
-  const series = selected.map((code, index) => ({
+  const raw = selected.map((code, index) => ({
     key: code,
     name: nameOf(code),
     color: SERIES_COLORS[index % SERIES_COLORS.length],
     data: data?.[code] ?? [],
   }))
+
+  // Every line is clipped and converted the same way, so the shapes stay
+  // comparable no matter which country was picked first.
+  const startYear = startYearOf(raw.map((item) => item.data), range)
+  const series = raw.map((item) => ({ ...item, data: applyView(item.data, startYear, units) }))
   const hasData = data !== null && series.some((item) => factsOf(item.data).length > 0)
+  const baseYear = factsOf(series[0]?.data)[0]?.year ?? null
 
   function exportCsv() {
     const years = new Set<number>()
@@ -86,7 +98,7 @@ export default function UnemploymentPage() {
 
   async function exportPng() {
     try {
-      await downloadChartPng(chartHolder.current, 'macroscope-unemployment.png', '#0b213e')
+      await downloadChartPng(chartHolder.current, 'macroscope-unemployment.png', '#210b11')
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)
     }
@@ -135,16 +147,25 @@ export default function UnemploymentPage() {
       ) : (
         <>
           <Card title={t('unemp.chart')}>
+            <ChartControls
+              range={range}
+              onRange={setRange}
+              units={units}
+              onUnits={setUnits}
+              baseYear={baseYear}
+            />
             <div ref={chartHolder}>
-              <MultiLineChart series={series} unit="%" />
+              <MultiLineChart series={series} unit={unitFor(units, '%')} />
             </div>
             <div className={styles.exportRow}>
               <ExportBar onCsv={exportCsv} onPng={exportPng} />
             </div>
           </Card>
 
+          {/* The cards always report the real rate, even when the chart is
+              showing an index, so the headline number never lies. */}
           <div className={styles.stats}>
-            {series.map((item) => {
+            {raw.map((item) => {
               const facts = factsOf(item.data)
               if (facts.length === 0) {
                 return <StatCard key={item.key} label={item.name} value={t('common.noData')} />

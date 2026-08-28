@@ -1,21 +1,27 @@
 /* MacroScope design tokens. The single source of truth for the visual style.
-   Theme: night sky. Deep dark blue black background, light text,
-   one bright blue accent, subtle stars on the landing.
-   Rules: sharp corners (2px maximum), no shadows, minimalism. */
+   Theme: cherry red. Near black background with a red undertone, light text,
+   one cherry accent plus a warm gold secondary.
+   Rules: sharp corners (2px maximum), no shadows, minimalism.
+
+   Contrast was measured against the background: text 17.8:1, muted 7.5:1,
+   accent 5.1:1, and dark text on an accent button 5.1:1, so buttons and
+   labels clear the AA threshold in both directions. */
 
 :root {
   color-scheme: dark;
 
   /* colors */
-  --color-bg: #06152a;
-  --color-surface: #0b213e;
-  --color-text: #f5f8ff;
-  --color-text-muted: #9bb0ca;
-  --color-border: #244363;
-  --color-accent: #5b8cff;
-  --color-accent-hover: #82a8ff;
-  --color-error: #ff7180;
-  --color-cyan: #7ed8e8;
+  --color-bg: #150609;
+  --color-surface: #210b11;
+  --color-surface-2: #2c1018;
+  --color-text: #fdf0f2;
+  --color-text-muted: #c0949d;
+  --color-border: #4a1c28;
+  --color-accent: #e8425c;
+  --color-accent-hover: #f45c74;
+  --color-cyan: #e8a33d;
+  --color-error: #ff7a3d;
+  --color-positive: #4fd18b;
 
   /* typography */
   --font-heading: 'Space Grotesk Variable', sans-serif;

@@ -22,7 +22,7 @@ void main(){vec2 uv=gl_FragCoord.xy/uResolution;vec3 ramp=mix(uColorStops[0],uCo
 
 type AuroraProps = { colorStops?: [string, string, string]; speed?: number; blend?: number; amplitude?: number }
 
-export default function Aurora({ colorStops = ['#0b2e66', '#3d72ff', '#a9d6ff'], speed = 0.35, blend = 0.28, amplitude = 0.7 }: AuroraProps) {
+export default function Aurora({ colorStops = ['#3a0d18', '#e8425c', '#f7b8c4'], speed = 0.35, blend = 0.28, amplitude = 0.7 }: AuroraProps) {
   const container = useRef<HTMLDivElement>(null)
   const propsRef = useRef({ colorStops, speed, blend, amplitude })
   propsRef.current = { colorStops, speed, blend, amplitude }

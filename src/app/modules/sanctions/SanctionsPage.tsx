@@ -78,7 +78,7 @@ export default function SanctionsPage() {
       await downloadChartPng(
         holders.current[index],
         `macroscope-${country}-${CHART_CONFIG[index].indicator}.png`,
-        '#0b213e',
+        '#210b11',
       )
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)

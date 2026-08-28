@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import {
   Card,
   CountrySelect,
@@ -19,6 +19,9 @@ import type { IndicatorPoint } from '../../../backend/worldbank'
 import IndicatorLineChart from '../../../shared/charts/IndicatorLineChart'
 import MultiLineChart from '../../../shared/charts/MultiLineChart'
 import { SERIES_COLORS } from '../../../shared/charts/chartStyle'
+import ChartControls from '../../../shared/charts/ChartControls'
+import { applyView, startYearOf, unitFor } from '../../../shared/charts/transform'
+import type { RangeKey, UnitsKey } from '../../../shared/charts/transform'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
 import { buildInsights } from '../../../shared/lib/insights'
 import { useI18n } from '../../../shared/i18n'
@@ -80,6 +83,17 @@ interface ChartCardProps {
 
 function ChartCard({ title, primary, secondary, unit, fileBase }: ChartCardProps) {
   const holder = useRef<HTMLDivElement>(null)
+  // Each chart keeps its own range and units: the reader usually wants a long
+  // view of income and a short view of prices on the same page.
+  const [range, setRange] = useState<RangeKey>('all')
+  const [units, setUnits] = useState<UnitsKey>('level')
+
+  const sources = secondary ? [primary.points, secondary.points] : [primary.points]
+  const startYear = startYearOf(sources, range)
+  const primaryView = applyView(primary.points, startYear, units)
+  const secondaryView = secondary ? applyView(secondary.points, startYear, units) : null
+  const viewUnit = unitFor(units, unit)
+  const baseYear = primaryView.find((point) => point.value !== null)?.year ?? null
 
   function exportCsv() {
     if (secondary) {
@@ -106,7 +120,7 @@ function ChartCard({ title, primary, secondary, unit, fileBase }: ChartCardProps
 
   async function exportPng() {
     try {
-      await downloadChartPng(holder.current, `${fileBase}.png`, '#0b213e')
+      await downloadChartPng(holder.current, `${fileBase}.png`, '#210b11')
     } catch (error) {
       console.warn('Chart export failed:', error)
     }
@@ -114,17 +128,24 @@ function ChartCard({ title, primary, secondary, unit, fileBase }: ChartCardProps
 
   return (
     <Card title={title}>
+      <ChartControls
+        range={range}
+        onRange={setRange}
+        units={units}
+        onUnits={setUnits}
+        baseYear={baseYear}
+      />
       <div ref={holder}>
-        {secondary ? (
+        {secondary && secondaryView ? (
           <MultiLineChart
             series={[
-              { key: 'primary', name: primary.name, color: SERIES_COLORS[0], data: primary.points },
-              { key: 'secondary', name: secondary.name, color: SERIES_COLORS[1], data: secondary.points },
+              { key: 'primary', name: primary.name, color: SERIES_COLORS[0], data: primaryView },
+              { key: 'secondary', name: secondary.name, color: SERIES_COLORS[1], data: secondaryView },
             ]}
-            unit={unit}
+            unit={viewUnit}
           />
         ) : (
-          <IndicatorLineChart data={primary.points} unit={unit} seriesName={primary.name} />
+          <IndicatorLineChart data={primaryView} unit={viewUnit} seriesName={primary.name} />
         )}
       </div>
       <div className={styles.exportRow}>
