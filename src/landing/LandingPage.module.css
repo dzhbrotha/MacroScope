@@ -175,3 +175,11 @@
 .navLink{font-size:12px;text-transform:uppercase;letter-spacing:.06em}.storyCopy article{min-height:52vh;padding-top:15vh;padding-bottom:10vh}.storySection{background:#210b11}
 .storySection{background:#210b11}.visualWindow{background:#1a070c;color:var(--color-text)}.visualChart{border-color:#4a1c28}.visualChart b{background:#ffc9d3}.visualReadout{border-color:#4a1c28;color:var(--color-text-muted)}.visualReadout strong{color:var(--color-text)}.featureSection{background:#190709;color:var(--color-text)}.featureText{color:var(--color-text-muted)}.labPreview{background:#210b11;border-color:var(--color-border)}.previewLine{border-color:var(--color-border)}.widgetDark{background:#2c1018;color:var(--color-text);border-color:var(--color-border)}.widgetDark .widgetTag{color:var(--color-text-muted)}.signalRows .down{color:var(--color-cyan)}
 @media (max-width:700px){.nav{gap:12px}.nav .navLink{display:none}.storyCopy article{min-height:auto;padding:70px 0}}
+
+.signalRows .good{color:var(--color-positive)}.signalRows .bad{color:var(--color-error)}.signalRows strong{font-variant-numeric:tabular-nums}.signalRows em{font-variant-numeric:tabular-nums}
+.moduleCard{transition:border-color 140ms ease,padding-left 140ms ease}.moduleCard:hover{border-color:color-mix(in srgb,var(--color-accent) 60%,var(--color-border))}.moduleCard:hover .moduleTitle{color:var(--color-accent)}
+.widget{transition:border-color 140ms ease}.widget:hover{border-color:color-mix(in srgb,var(--color-accent) 55%,var(--color-border))}
+
+/* The dot next to the live label breathes, so the word live is not just a claim. */
+.status i{animation:beat 2400ms ease-in-out infinite}
+@keyframes beat{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.82)}}

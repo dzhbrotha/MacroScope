@@ -1,0 +1,45 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chart {
+  width: 100%;
+  height: 132px;
+  display: block;
+  overflow: visible;
+}
+
+.area {
+  fill: color-mix(in srgb, var(--color-accent) 16%, transparent);
+}
+
+.line {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+}
+
+.peak {
+  fill: var(--color-cyan);
+}
+
+.last {
+  fill: var(--color-text);
+}
+
+.scale {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.scale > span:nth-child(2) {
+  color: var(--color-cyan);
+}

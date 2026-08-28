@@ -1,0 +1,54 @@
+.wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: var(--space-5);
+}
+
+.bars {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  height: 92px;
+}
+
+.slot {
+  position: relative;
+  flex: 1;
+}
+
+.slot i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: block;
+}
+
+.up {
+  background: var(--color-accent);
+}
+
+.down {
+  background: var(--color-error);
+}
+
+.zero {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}

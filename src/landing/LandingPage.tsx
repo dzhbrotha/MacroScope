@@ -6,6 +6,9 @@ import { LanguageSwitcher, useI18n } from '../shared/i18n'
 import type { TranslationKey } from '../shared/i18n'
 import buttonStyles from '../shared/components/Button.module.css'
 import ScrollProgress from './ScrollProgress'
+import PulseSpark from './PulseSpark'
+import PulseBars from './PulseBars'
+import { useLivePulse } from './useLivePulse'
 import styles from './LandingPage.module.css'
 
 const modules: { icon: typeof Scale; title: TranslationKey; text: TranslationKey }[] = [
@@ -22,6 +25,12 @@ const steps: { icon: typeof Database; title: TranslationKey; text: TranslationKe
   { icon: Lock, title: 'land.step3', text: 'land.step3x' },
 ]
 
+const PULSE_LABEL: Record<string, TranslationKey> = {
+  inflation: 'ind.inflation',
+  unemployment: 'ind.unemployment',
+  gdpGrowth: 'ind.gdpGrowth',
+}
+
 const audiences: [TranslationKey, TranslationKey][] = [
   ['land.aud1', 'land.aud1x'],
   ['land.aud2', 'land.aud2x'],
@@ -30,6 +39,7 @@ const audiences: [TranslationKey, TranslationKey][] = [
 
 export default function LandingPage() {
   const { t } = useI18n()
+  const pulse = useLivePulse()
 
   return (
     <div>
@@ -77,7 +87,11 @@ export default function LandingPage() {
             <div className={styles.visualWindow}>
               <div className={styles.visualTop}><span>{t('land.fieldNote')}</span><span>01—03</span></div>
               <div className={styles.visualTitle}>{t('land.visualTitle')}</div>
-              <div className={styles.visualChart}><i /><i /><i /><i /><i /><b /></div>
+              {pulse.history.length > 3 ? (
+                <PulseSpark points={pulse.history} />
+              ) : (
+                <div className={styles.visualChart}><i /><i /><i /><i /><i /><b /></div>
+              )}
               <div className={styles.visualReadout}>
                 <span>{t('land.visualSignal')}</span>
                 <strong>{t('land.visualStrong')}</strong>
@@ -119,14 +133,44 @@ export default function LandingPage() {
             <article className={`${styles.widget} ${styles.widgetWide}`}>
               <div className={styles.widgetTop}>
                 <span>{t('land.pulse')}</span>
-                <span className={styles.widgetTag}>{t('land.sampleIndicators')}</span>
+                <span className={styles.widgetTag}>
+                  {pulse.ready ? t('land.liveIndicators') : t('land.sampleIndicators')}
+                </span>
               </div>
               <div className={styles.signalRows}>
-                <div><span>{t('ind.inflation')}</span><strong>3.2%</strong><em className={styles.down}>− 0.4%</em></div>
-                <div><span>{t('ind.unemployment')}</span><strong>4.1%</strong><em>+ 0.2%</em></div>
-                <div><span>{t('land.policyRate')}</span><strong>5.25%</strong><em>{t('land.watching')}</em></div>
+                {pulse.ready ? (
+                  pulse.rows.map((row) => {
+                    const welcome = row.delta === null ? null : (row.delta >= 0) === row.goodWhenUp
+                    return (
+                      <div key={row.key}>
+                        <span>{t(PULSE_LABEL[row.key])}</span>
+                        <strong>{`${row.value.toFixed(1)}%`}</strong>
+                        <em className={welcome === null ? undefined : welcome ? styles.good : styles.bad}>
+                          {row.delta === null
+                            ? t('land.watching')
+                            : `${row.delta >= 0 ? '+' : '−'} ${Math.abs(row.delta).toFixed(1)} pp`}
+                        </em>
+                      </div>
+                    )
+                  })
+                ) : (
+                  <>
+                    <div><span>{t('ind.inflation')}</span><strong>3.2%</strong><em className={styles.down}>− 0.4%</em></div>
+                    <div><span>{t('ind.unemployment')}</span><strong>4.1%</strong><em>+ 0.2%</em></div>
+                    <div><span>{t('land.policyRate')}</span><strong>5.25%</strong><em>{t('land.watching')}</em></div>
+                  </>
+                )}
               </div>
-              <p className={styles.widgetNote}>{t('land.pulseNote')}</p>
+              {pulse.growth.length > 3 ? <PulseBars points={pulse.growth} /> : null}
+
+              <p className={styles.widgetNote}>
+                {pulse.ready
+                  ? t('land.pulseLive', {
+                      country: t('land.pulseCountry'),
+                      year: pulse.rows[0].year,
+                    })
+                  : t('land.pulseNote')}
+              </p>
             </article>
             <article className={styles.widget}>
               <div className={styles.widgetTop}>
