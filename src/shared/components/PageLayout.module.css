@@ -43,6 +43,13 @@
   font-size: 14px;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
 .content {
   display: flex;
   flex-direction: column;

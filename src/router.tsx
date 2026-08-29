@@ -22,12 +22,10 @@ export const router = createBrowserRouter([
   { path: '/signin', element: <SignInPage /> },
   { path: '/signup', element: <SignUpPage /> },
   {
+    // The modules are readable without an account: a product nobody can see or
+    // link to has no way of reaching anyone.
     path: '/app',
-    element: (
-      <RequireAuth>
-        <AppLayout />
-      </RequireAuth>
-    ),
+    element: <AppLayout />,
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'board', element: <BoardPage /> },
@@ -36,7 +34,16 @@ export const router = createBrowserRouter([
       { path: 'unemployment', element: <UnemploymentPage /> },
       { path: 'quality-of-life', element: <QualityOfLifePage /> },
       { path: 'country', element: <CountryProfilePage /> },
-      { path: 'ai-explainer', element: <AiExplainerPage /> },
+      {
+        // The explainer keeps a question history against the user, so it alone
+        // still needs a session.
+        path: 'ai-explainer',
+        element: (
+          <RequireAuth>
+            <AiExplainerPage />
+          </RequireAuth>
+        ),
+      },
       { path: 'property-lab', element: <PropertyLabPage /> },
     ],
   },

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LogOut, Menu, Search, X } from 'lucide-react'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { LogIn, LogOut, Menu, Search, X } from 'lucide-react'
 import { signOut } from '../backend/auth'
 import { useAuth } from './auth/AuthProvider'
 import { Logo } from '../shared/components'
@@ -77,11 +77,23 @@ export default function AppLayout() {
 
             <div className={styles.bottom}>
               <LanguageSwitcher />
-              <span className={styles.email}>{session?.user.email}</span>
-              <button className={styles.signOut} onClick={handleSignOut}>
-                <LogOut size={15} strokeWidth={1.75} />
-                <span>{t('nav.signOut')}</span>
-              </button>
+              {session ? (
+                <>
+                  <span className={styles.email}>{session.user.email}</span>
+                  <button className={styles.signOut} onClick={handleSignOut}>
+                    <LogOut size={15} strokeWidth={1.75} />
+                    <span>{t('nav.signOut')}</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span className={styles.guest}>{t('nav.guestHint')}</span>
+                  <Link to="/signin" className={styles.signOut}>
+                    <LogIn size={15} strokeWidth={1.75} />
+                    <span>{t('nav.signIn')}</span>
+                  </Link>
+                </>
+              )}
             </div>
           </aside>
 

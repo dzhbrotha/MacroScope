@@ -1,0 +1,30 @@
+.share {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 var(--space-4);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font: 13px var(--font-body);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.share:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.done {
+  border-color: var(--color-accent);
+  color: var(--color-accent-soft);
+}
+
+.share:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

@@ -1,6 +1,7 @@
 import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { router } from './router'
 import { Aurora } from './shared/components'
 import { AuthProvider } from './app/auth/AuthProvider'
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <Suspense fallback={pageFallback}>
           <RouterProvider router={router} />
+          <Analytics />
         </Suspense>
       </AuthProvider>
     </I18nProvider>

@@ -4,7 +4,6 @@ import { ButtonLink } from '../shared/components'
 import { Logo } from '../shared/components'
 import { LanguageSwitcher, useI18n } from '../shared/i18n'
 import type { TranslationKey } from '../shared/i18n'
-import buttonStyles from '../shared/components/Button.module.css'
 import ScrollProgress from './ScrollProgress'
 import PulseSpark from './PulseSpark'
 import PulseBars from './PulseBars'
@@ -68,12 +67,9 @@ export default function LandingPage() {
           <p className={styles.heroText}>{t('land.heroText')}</p>
           <div className={styles.heroActions}>
             <ButtonLink to="/signup" variant="accent">{t('land.heroEnter')}</ButtonLink>
-            <a
-              href="#modules"
-              className={`${buttonStyles.button} ${buttonStyles.link} ${buttonStyles.secondary}`}
-            >
-              {t('land.heroSee')}
-            </a>
+            <ButtonLink to="/app/board" variant="secondary">
+              {t('land.heroOpen')}
+            </ButtonLink>
           </div>
           <div className={styles.signalRail}>
             <div><span>{t('land.rail1')}</span><strong>{t('land.rail1v')}</strong></div>

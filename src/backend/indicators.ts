@@ -14,10 +14,24 @@ function isFresh(fetchedAt: string): boolean {
   return (Date.now() - new Date(fetchedAt).getTime()) / 86_400_000 < CACHE_MAX_AGE_DAYS
 }
 
+// The cache is readable by anyone but only a signed in reader may warm it.
+// Without this check every anonymous visit fired four writes that the database
+// refused, which is four wasted round trips and four errors in the console.
+async function canWriteCache(): Promise<boolean> {
+  try {
+    const { data } = await supabase.auth.getSession()
+    return data.session !== null
+  } catch {
+    return false
+  }
+}
+
 async function writeCache(
   indicatorCode: string,
   series: Record<string, IndicatorPoint[]>,
 ): Promise<void> {
+  if (!(await canWriteCache())) return
+
   const rows = Object.entries(series)
     .filter(([, points]) => points.length > 0)
     .map(([countryCode, points]) => ({

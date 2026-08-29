@@ -20,6 +20,8 @@ export const en = {
   'common.latest': 'Latest, {year}',
   'common.insights': 'What the numbers say',
   'common.whatIsThis': 'What is this',
+  'share.button': 'Share',
+  'share.hint': 'The link keeps the country, the range and the units you are looking at right now',
   'source.line': 'Source: World Bank open data, indicators {codes}, retrieved {date}. Every figure on this page can be checked against the World Bank directly, and the CSV export is free.',
 
   'chart.range': 'Range',
@@ -58,6 +60,8 @@ export const en = {
 
   'nav.dashboard': 'Dashboard',
   'nav.board': 'Board',
+  'nav.signIn': 'Sign in',
+  'nav.guestHint': 'Reading without an account. One is needed only to keep your questions to the AI explainer.',
   'nav.sanctions': 'Sanctions Impact',
   'nav.inflation': 'Inflation Forecast',
   'nav.unemployment': 'Unemployment',
@@ -235,6 +239,7 @@ export const en = {
   'land.heroText': 'MacroScope turns open World Bank data into clear, practical insight. Explore the forces shaping economies, then test what they could mean for a real decision.',
   'land.heroEnter': 'Enter the lab',
   'land.heroSee': 'See what we offer',
+  'land.heroOpen': 'Open it without signing up',
   'land.rail1': '01 / Understand',
   'land.rail1v': 'Inflation, rates, jobs',
   'land.rail2': '02 / Explore',
@@ -336,6 +341,8 @@ export const ru: Record<TranslationKey, string> = {
   'common.latest': 'Последние данные, {year}',
   'common.insights': 'О чём говорят цифры',
   'common.whatIsThis': 'Что это',
+  'share.button': 'Поделиться',
+  'share.hint': 'Ссылка сохранит страну, период и единицы, которые ты смотришь прямо сейчас',
   'source.line': 'Источник: открытые данные Всемирного банка, показатели {codes}, получены {date}. Любую цифру на этой странице можно проверить напрямую у Всемирного банка, а выгрузка в CSV бесплатна.',
 
   'chart.range': 'Период',
@@ -374,6 +381,8 @@ export const ru: Record<TranslationKey, string> = {
 
   'nav.dashboard': 'Обзор',
   'nav.board': 'Мультиграфик',
+  'nav.signIn': 'Войти',
+  'nav.guestHint': 'Читаешь без аккаунта. Он нужен только чтобы хранить вопросы к AI.',
   'nav.sanctions': 'Влияние санкций',
   'nav.inflation': 'Прогноз инфляции',
   'nav.unemployment': 'Безработица',
@@ -551,6 +560,7 @@ export const ru: Record<TranslationKey, string> = {
   'land.heroText': 'MacroScope превращает открытые данные Всемирного банка в понятные и применимые выводы. Посмотрите, что движет экономикой, и проверьте, что это значит для конкретного решения.',
   'land.heroEnter': 'Войти в лабораторию',
   'land.heroSee': 'Посмотреть возможности',
+  'land.heroOpen': 'Открыть без регистрации',
   'land.rail1': '01 / Понять',
   'land.rail1v': 'Инфляция, ставки, занятость',
   'land.rail2': '02 / Изучить',
