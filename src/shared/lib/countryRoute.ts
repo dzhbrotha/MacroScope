@@ -9,6 +9,7 @@ const SINGLE = [
   '/app',
   '/app/board',
   '/app/country',
+  '/app/data-trust',
   '/app/inflation',
   '/app/quality-of-life',
   '/app/sanctions',

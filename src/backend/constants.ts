@@ -10,6 +10,17 @@ export const INDICATORS = {
   fdiInflows: 'BX.KLT.DINV.WD.GD.ZS',
 } as const
 
+// Statistical Performance Indicators: the World Bank's own published measure
+// of how well a national statistical system works.
+export const SPI = {
+  overall: 'IQ.SPI.OVRL',
+  dataUse: 'IQ.SPI.PIL1',
+  dataServices: 'IQ.SPI.PIL2',
+  dataProducts: 'IQ.SPI.PIL3',
+  dataSources: 'IQ.SPI.PIL4',
+  dataInfrastructure: 'IQ.SPI.PIL5',
+} as const
+
 export type IndicatorKey = keyof typeof INDICATORS
 
 export interface Country {

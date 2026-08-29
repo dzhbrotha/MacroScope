@@ -1,0 +1,197 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.controls > div {
+  min-width: 240px;
+}
+
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-6);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 2px solid var(--color-accent);
+  border-radius: var(--radius);
+}
+
+.kicker {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.score {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: clamp(38px, 7vw, 58px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.outOf {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rankBox {
+  padding-left: var(--space-6);
+  border-left: 1px solid var(--color-border);
+}
+
+.rank {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.heroText {
+  flex: 1;
+  min-width: 260px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.pillars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pillar {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.pillarHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.pillarName {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+.pillarValue {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  display: block;
+  height: 8px;
+  background: var(--color-surface-2);
+}
+
+/* The fill takes its colour from the tone class on it, so one set of tone
+   classes serves both the bar and the figure above it. */
+.track i {
+  display: block;
+  height: 100%;
+  background: currentColor;
+}
+
+/* Three bands rather than a gradient: a score is not precise enough to earn a
+   continuous colour scale. */
+.strong {
+  color: var(--color-positive);
+}
+
+.middling {
+  color: var(--color-accent-soft);
+}
+
+.weak {
+  color: var(--color-accent);
+}
+
+.fillEmpty {
+  color: transparent;
+}
+
+.coverage {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-4);
+}
+
+.covRow {
+  display: grid;
+  grid-template-columns: 1fr auto 96px 116px;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 12.5px;
+}
+
+.covName {
+  color: var(--color-text);
+}
+
+.covYear {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.covFresh {
+  text-align: right;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.covStale {
+  text-align: right;
+  color: var(--color-error);
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin: 0 0 var(--space-3);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.note:last-of-type {
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  .covRow {
+    grid-template-columns: 1fr auto;
+    row-gap: 4px;
+  }
+
+  .rankBox {
+    padding-left: 0;
+    border-left: 0;
+  }
+}

@@ -21,13 +21,20 @@ import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
 import { useI18n } from '../../../shared/i18n'
 import type { TranslationKey } from '../../../shared/i18n'
 import BeforeAfterChart from './BeforeAfterChart'
+import ReplayPlayer from './ReplayPlayer'
 import { SANCTIONED_COUNTRIES, SANCTION_EVENTS } from './data'
 import styles from './SanctionsPage.module.css'
 
-const CHART_CONFIG: { title: TranslationKey; desc: TranslationKey; unit: string; indicator: string }[] = [
-  { title: 'sanctions.gdpGrowth', desc: 'ind.gdpGrowth.desc', unit: '%', indicator: INDICATORS.gdpGrowth },
-  { title: 'sanctions.trade', desc: 'ind.trade.desc', unit: '%', indicator: INDICATORS.tradePercentGdp },
-  { title: 'sanctions.fdi', desc: 'ind.fdi.desc', unit: '%', indicator: INDICATORS.fdiInflows },
+const CHART_CONFIG: {
+  title: TranslationKey
+  desc: TranslationKey
+  unit: string
+  indicator: string
+  goodWhenUp: boolean
+}[] = [
+  { title: 'sanctions.gdpGrowth', desc: 'ind.gdpGrowth.desc', unit: '%', indicator: INDICATORS.gdpGrowth, goodWhenUp: true },
+  { title: 'sanctions.trade', desc: 'ind.trade.desc', unit: '%', indicator: INDICATORS.tradePercentGdp, goodWhenUp: true },
+  { title: 'sanctions.fdi', desc: 'ind.fdi.desc', unit: '%', indicator: INDICATORS.fdiInflows, goodWhenUp: true },
 ]
 
 const COMPARE_SPAN = 3
@@ -130,6 +137,19 @@ export default function SanctionsPage() {
         <EmptyState message={t('sanctions.empty', { country: countryLabel })} />
       ) : data ? (
         <>
+          <Card title={t('replay.title')}>
+            <ReplayPlayer
+              shockYear={selectedYear}
+              series={CHART_CONFIG.map((config, index) => ({
+                key: config.indicator,
+                name: t(config.title),
+                unit: config.unit,
+                points: data[index],
+                goodWhenUp: config.goodWhenUp,
+              }))}
+            />
+          </Card>
+
           {(() => {
             const paired = CHART_CONFIG.map((config, index) => ({
               name: t(config.title),

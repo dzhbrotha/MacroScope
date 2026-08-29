@@ -8,6 +8,7 @@ const SignUpPage = lazy(() => import('./app/auth/SignUpPage'))
 const AppLayout = lazy(() => import('./app/AppLayout'))
 const DashboardPage = lazy(() => import('./app/DashboardPage'))
 const BoardPage = lazy(() => import('./app/modules/board/BoardPage'))
+const TrustPage = lazy(() => import('./app/modules/trust/TrustPage'))
 const SanctionsPage = lazy(() => import('./app/modules/sanctions/SanctionsPage'))
 const InflationPage = lazy(() => import('./app/modules/inflation/InflationPage'))
 const UnemploymentPage = lazy(() => import('./app/modules/unemployment/UnemploymentPage'))
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       { index: true, element: <DashboardPage /> },
       { path: 'board', element: <BoardPage /> },
       { path: 'sanctions', element: <SanctionsPage /> },
+      { path: 'data-trust', element: <TrustPage /> },
       { path: 'inflation', element: <InflationPage /> },
       { path: 'unemployment', element: <UnemploymentPage /> },
       { path: 'quality-of-life', element: <QualityOfLifePage /> },
