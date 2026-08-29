@@ -1,27 +1,35 @@
 /* MacroScope design tokens. The single source of truth for the visual style.
-   Theme: cherry red. Near black background with a red undertone, light text,
-   one cherry accent plus a warm gold secondary.
+   Palette: neutral charcoal and white with a red family accent. Five brand
+   values, plus three neutral tints derived from the charcoal for surfaces.
    Rules: sharp corners (2px maximum), no shadows, minimalism.
 
-   Contrast was measured against the background: text 17.8:1, muted 7.5:1,
-   accent 5.1:1, and dark text on an accent button 5.1:1, so buttons and
-   labels clear the AA threshold in both directions. */
+   Contrast measured against the background: text 15.8:1, muted 6.1:1,
+   soft accent 8.0:1, accent 4.1:1 (graphics and large type only), and white on
+   the filled accent 6.2:1, which is why filled buttons use the deep red.
+   The deep red is never used for text on the background: it scores 2.5:1.
+
+   There is no green in this palette, so direction is carried by saturation:
+   a welcome move is the calm soft accent, an unwelcome one the vivid red. */
 
 :root {
   color-scheme: dark;
 
-  /* colors */
-  --color-bg: #150609;
-  --color-surface: #210b11;
-  --color-surface-2: #2c1018;
-  --color-text: #fdf0f2;
-  --color-text-muted: #c0949d;
-  --color-border: #4a1c28;
-  --color-accent: #e8425c;
-  --color-accent-hover: #f45c74;
-  --color-cyan: #e8a33d;
-  --color-error: #ff7a3d;
-  --color-positive: #4fd18b;
+  /* brand */
+  --color-bg: #222223;
+  --color-text: #fefefe;
+  --color-accent: #d5575e;
+  --color-accent-fill: #b62a2d;
+  --color-accent-soft: #e6a8a8;
+
+  /* neutral tints of the background, for surfaces and hairlines */
+  --color-surface: #29292a;
+  --color-surface-2: #313133;
+  --color-border: #3c3c3e;
+  --color-text-muted: #a0a0a3;
+
+  /* direction */
+  --color-positive: #e6a8a8;
+  --color-error: #d5575e;
 
   /* typography */
   --font-heading: 'Space Grotesk Variable', sans-serif;

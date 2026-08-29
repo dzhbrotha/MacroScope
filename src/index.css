@@ -41,8 +41,8 @@ body::after {
 }
 
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-bg);
+  background: var(--color-accent-fill);
+  color: var(--color-text);
 }
 
 :focus-visible {

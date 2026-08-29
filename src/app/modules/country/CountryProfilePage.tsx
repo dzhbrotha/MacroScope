@@ -121,7 +121,7 @@ function ChartCard({ title, primary, secondary, unit, fileBase }: ChartCardProps
 
   async function exportPng() {
     try {
-      await downloadChartPng(holder.current, `${fileBase}.png`, '#210b11')
+      await downloadChartPng(holder.current, `${fileBase}.png`, '#29292a')
     } catch (error) {
       console.warn('Chart export failed:', error)
     }

@@ -9,12 +9,12 @@
 }
 
 .countryLink:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .score {
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .note {
@@ -35,7 +35,7 @@
   font-size: 40px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .detailLabel {
@@ -157,4 +157,97 @@
   margin: 0 0 var(--space-3);
   font-size: 13px;
   color: var(--color-text-muted);
+}
+
+/* The audit block: stated weight against the influence the subindex really
+   has. The two bars share a track so the gap between them is the point. */
+.auditRows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-5) 0 var(--space-6);
+}
+
+.auditRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auditHeadRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.auditName {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.auditNumbers {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.auditNumbers b {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.auditOver {
+  color: var(--color-accent-soft);
+}
+
+.auditUnder {
+  color: var(--color-text-muted);
+}
+
+.auditTrack {
+  position: relative;
+  display: block;
+  height: 16px;
+  background: var(--color-surface-2);
+}
+
+.auditTrack i {
+  position: absolute;
+  left: 0;
+  display: block;
+}
+
+.auditWeight {
+  top: 0;
+  height: 7px;
+  background: var(--color-border);
+}
+
+.auditShare {
+  bottom: 0;
+  height: 7px;
+  background: var(--color-accent);
+}
+
+.auditTitle {
+  margin: var(--space-6) 0 var(--space-3);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.band {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  cursor: help;
 }

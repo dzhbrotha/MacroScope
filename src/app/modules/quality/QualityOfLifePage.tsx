@@ -7,6 +7,7 @@ import {
   ExportBar,
   PageLayout,
   Skeleton,
+  SourceNote,
   Table,
   Tooltip,
 } from '../../../shared/components'
@@ -21,6 +22,8 @@ import { downloadCsv } from '../../../shared/lib/exportData'
 import { useI18n } from '../../../shared/i18n'
 import type { TranslationKey } from '../../../shared/i18n'
 import { computeScores, WEIGHTS } from './index'
+import { computeBands, computeInfluence } from './audit'
+import type { SubKey } from './audit'
 import type { CountryMetrics, ScoredCountry } from './index'
 import styles from './QualityOfLifePage.module.css'
 
@@ -46,6 +49,13 @@ async function loadMetrics(): Promise<CountryMetrics[]> {
   }))
 }
 
+const SUB_LABEL: Record<SubKey, TranslationKey> = {
+  gdp: 'quality.barGdp',
+  life: 'quality.barLife',
+  inflation: 'quality.barInflation',
+  unemployment: 'quality.barEmployment',
+}
+
 const BAR_ROWS: { key: 'gdp' | 'life' | 'inflation' | 'unemployment'; label: TranslationKey; desc: TranslationKey; weight: number }[] = [
   { key: 'gdp', label: 'quality.barGdp', desc: 'ind.gdpPerCapita.desc', weight: WEIGHTS.gdp },
   { key: 'life', label: 'quality.barLife', desc: 'ind.lifeExpectancy.desc', weight: WEIGHTS.life },
@@ -61,6 +71,24 @@ export default function QualityOfLifePage() {
   const [selectedCode, setSelectedCode] = useQueryState('country', '')
 
   const result = useMemo(() => (data ? computeScores(data) : null), [data])
+
+  // The two answers the methodology literature says a ranking owes its reader:
+  // what the weights really do, and whether the order survives other choices.
+  const influence = useMemo(
+    () => (result ? computeInfluence(result.scored) : []),
+    [result],
+  )
+  const robustness = useMemo(
+    () => (result ? computeBands(result.scored) : { bands: new Map(), scenarioCount: 0 }),
+    [result],
+  )
+  const widest = useMemo(() => {
+    let most = 0
+    robustness.bands.forEach((band) => {
+      if (band.spread > most) most = band.spread
+    })
+    return most
+  }, [robustness])
   // 177 rows with no way to find your own country was the main complaint here.
   const rows = useMemo(() => {
     if (!result) return []
@@ -96,6 +124,23 @@ export default function QualityOfLifePage() {
       render: (row) => <span className={styles.score}>{row.score.toFixed(1)}</span>,
     },
     {
+      key: 'band',
+      header: t('quality.band'),
+      align: 'right',
+      render: (row) => {
+        const band = robustness.bands.get(row.code)
+        if (!band) return ''
+        return (
+          <span
+            className={styles.band}
+            title={t('quality.bandHint', { count: robustness.scenarioCount })}
+          >
+            {t('quality.bandOf', { best: band.best, worst: band.worst })}
+          </span>
+        )
+      },
+    },
+    {
       key: 'gdp',
       header: t('ind.gdpPerCapita'),
       align: 'right',
@@ -128,6 +173,7 @@ export default function QualityOfLifePage() {
         t('quality.rank'),
         t('common.country'),
         t('quality.score'),
+        t('quality.band'),
         t('ind.gdpPerCapita'),
         t('ind.lifeExpectancy'),
         t('ind.inflation'),
@@ -137,6 +183,10 @@ export default function QualityOfLifePage() {
         row.rank,
         row.name,
         row.score,
+        (() => {
+          const band = robustness.bands.get(row.code)
+          return band ? `${band.best}-${band.worst}` : ''
+        })(),
         row.gdpPerCapita,
         row.lifeExpectancy,
         row.inflation,
@@ -225,8 +275,55 @@ export default function QualityOfLifePage() {
             </Card>
           ) : null}
 
-          <Card title={t('quality.methodology')}>
+          <Card title={t('quality.audit')}>
+            <p className={styles.method}>{t('quality.auditIntro')}</p>
+
+            <div className={styles.auditRows}>
+              {influence.map((item) => (
+                <div key={item.key} className={styles.auditRow}>
+                  <span className={styles.auditHeadRow}>
+                    <span className={styles.auditName}>{t(SUB_LABEL[item.key])}</span>
+                    <span className={styles.auditNumbers}>
+                      <span>
+                        {t('quality.statedWeight')} <b>{Math.round(item.weight * 100)}%</b>
+                      </span>
+                      <span>
+                        {t('quality.influence')} <b>{Math.round(item.share * 100)}%</b>
+                      </span>
+                      <span className={item.ratio >= 1 ? styles.auditOver : styles.auditUnder}>
+                        {t('quality.times', { times: item.ratio.toFixed(2) })}
+                      </span>
+                    </span>
+                  </span>
+                  <span className={styles.auditTrack}>
+                    <i className={styles.auditWeight} style={{ width: `${item.weight * 100}%` }} />
+                    <i
+                      className={styles.auditShare}
+                      style={{ width: `${Math.max(0, item.share) * 100}%` }}
+                    />
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <h4 className={styles.auditTitle}>{t('quality.robustness')}</h4>
+            <p className={styles.method}>
+              {t('quality.robustnessText', { count: robustness.scenarioCount })}
+            </p>
+            <p className={styles.method}>{t('quality.spread', { spread: widest })}</p>
+
+            <h4 className={styles.auditTitle}>{t('quality.caveat')}</h4>
+            <p className={styles.method}>{t('quality.caveatText')}</p>
             <p className={styles.method}>{t('quality.methodologyText')}</p>
+
+            <SourceNote
+              codes={[
+                INDICATORS.gdpPerCapita,
+                INDICATORS.lifeExpectancy,
+                INDICATORS.inflation,
+                INDICATORS.unemployment,
+              ]}
+            />
           </Card>
         </>
       )}

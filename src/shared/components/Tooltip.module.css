@@ -14,7 +14,7 @@
 
 .wrap:hover .icon,
 .wrap:focus-visible .icon {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .bubble {

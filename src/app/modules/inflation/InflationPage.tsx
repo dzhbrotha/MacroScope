@@ -95,7 +95,7 @@ export default function InflationPage() {
       await downloadChartPng(
         chartHolder.current,
         `macroscope-${countryCode}-inflation.png`,
-        '#210b11',
+        '#29292a',
       )
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)

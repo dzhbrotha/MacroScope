@@ -34,12 +34,12 @@
 }
 
 .accent {
-  background: var(--color-accent);
-  color: var(--color-bg);
+  background: var(--color-accent-fill);
+  color: var(--color-text);
 }
 
 .accent:hover:not(:disabled) {
-  background: var(--color-accent-hover);
+  background: var(--color-accent);
 }
 
 .secondary {

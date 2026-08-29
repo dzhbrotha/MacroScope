@@ -23,7 +23,7 @@
 }
 
 .peak {
-  fill: var(--color-cyan);
+  fill: var(--color-accent-soft);
 }
 
 .last {
@@ -41,5 +41,5 @@
 }
 
 .scale > span:nth-child(2) {
-  color: var(--color-cyan);
+  color: var(--color-accent-soft);
 }

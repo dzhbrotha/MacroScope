@@ -61,6 +61,6 @@
 }
 
 .footer a {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
   text-decoration: none;
 }

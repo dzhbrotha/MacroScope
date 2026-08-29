@@ -99,7 +99,7 @@
 }
 
 .active svg {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
   opacity: 1;
 }
 

@@ -15,7 +15,7 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-cyan);
+  color: var(--color-accent-soft);
 }
 
 .list {

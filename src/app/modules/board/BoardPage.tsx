@@ -7,6 +7,7 @@ import {
   ErrorState,
   PageLayout,
   Skeleton,
+  SourceNote,
   Tooltip as InfoTip,
 } from '../../../shared/components'
 import { PinButton } from '../../../shared/watchlist'
@@ -53,7 +54,7 @@ const PANELS: PanelSpec[] = [
     label: 'ind.inflation',
     desc: 'ind.inflation.desc',
     unit: 'percent',
-    color: CHART.cyan,
+    color: CHART.accentSoft,
     goodWhenUp: false,
   },
   {
@@ -62,7 +63,7 @@ const PANELS: PanelSpec[] = [
     label: 'ind.unemployment',
     desc: 'ind.unemployment.desc',
     unit: 'percent',
-    color: CHART.positive,
+    color: CHART.text,
     goodWhenUp: false,
   },
   {
@@ -71,7 +72,7 @@ const PANELS: PanelSpec[] = [
     label: 'ind.trade',
     desc: 'ind.trade.desc',
     unit: 'percent',
-    color: CHART.accentSoft,
+    color: CHART.axis,
     goodWhenUp: true,
   },
 ]
@@ -206,6 +207,7 @@ export default function BoardPage() {
           </div>
 
           <p className={styles.note}>{t('board.note')}</p>
+          <SourceNote codes={PANELS.map((panel) => panel.code)} />
         </>
       )}
     </PageLayout>

@@ -98,7 +98,7 @@ export default function UnemploymentPage() {
 
   async function exportPng() {
     try {
-      await downloadChartPng(chartHolder.current, 'macroscope-unemployment.png', '#210b11')
+      await downloadChartPng(chartHolder.current, 'macroscope-unemployment.png', '#29292a')
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)
     }

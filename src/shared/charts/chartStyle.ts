@@ -12,25 +12,25 @@ function token(name: string, fallback: string): string {
 }
 
 export const CHART = {
-  axis: token('--color-text-muted', '#c0949d'),
-  grid: token('--color-border', '#4a1c28'),
-  accent: token('--color-accent', '#e8425c'),
-  accentSoft: token('--color-accent-hover', '#f45c74'),
-  cyan: token('--color-cyan', '#e8a33d'),
-  surface: token('--color-surface', '#210b11'),
-  bg: token('--color-bg', '#150609'),
-  text: token('--color-text', '#fdf0f2'),
-  positive: token('--color-positive', '#4fd18b'),
-  error: token('--color-error', '#ff7a3d'),
+  axis: token('--color-text-muted', '#a0a0a3'),
+  grid: token('--color-border', '#3c3c3e'),
+  accent: token('--color-accent', '#d5575e'),
+  accentSoft: token('--color-accent-soft', '#e6a8a8'),
+  accentFill: token('--color-accent-fill', '#b62a2d'),
+  surface: token('--color-surface', '#29292a'),
+  bg: token('--color-bg', '#222223'),
+  text: token('--color-text', '#fefefe'),
+  positive: token('--color-positive', '#e6a8a8'),
+  error: token('--color-error', '#d5575e'),
 } as const
 
-// Distinguishable line colors for multi country charts, cherry family.
+// Distinguishable line colors for multi country charts, red family.
 export const SERIES_COLORS = [
   CHART.accent,
-  CHART.cyan,
+  CHART.accentSoft,
   CHART.text,
   CHART.axis,
-  CHART.positive,
+  CHART.accentFill,
 ] as const
 
 export const TOOLTIP_STYLE = {
