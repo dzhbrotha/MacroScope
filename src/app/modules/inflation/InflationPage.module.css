@@ -40,3 +40,90 @@
   font-size: 12px;
   color: var(--color-text-muted);
 }
+
+/* The headline of the module: a percentage nobody feels, restated as hours
+   anyone can picture. It gets the accent edge because it is the first thing
+   the page is for. */
+.tax {
+  border: 1px solid var(--color-border);
+  border-left: 2px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.taxHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.taxKicker {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-soft);
+}
+
+.taxPick {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.taxPick select {
+  height: 30px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  font: 13px var(--font-body);
+  padding: 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.taxPick select:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.taxValue {
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 5vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  margin-top: var(--space-2);
+}
+
+.taxBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 620px;
+}
+
+.taxPrice {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-accent-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.taxMethod {
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  max-width: 720px;
+}
