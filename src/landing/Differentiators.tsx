@@ -98,7 +98,7 @@ export default function Differentiators() {
     <section className={styles.section} id="different">
       <div className={styles.inner}>
         <SectionHeading
-          index="01"
+          index="02"
           eyebrow={t('diff.eyebrow')}
           title={t('diff.title')}
           text={t('diff.text')}

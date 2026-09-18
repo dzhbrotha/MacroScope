@@ -12,6 +12,8 @@ import Hero from './Hero'
 import StatsBand from './StatsBand'
 import Differentiators from './Differentiators'
 import Faq from './Faq'
+import TickerTape from './TickerTape'
+import WorldPulse from './WorldPulse'
 import Closing from './Closing'
 import Reveal from './Reveal'
 import SectionHeading from './SectionHeading'
@@ -60,10 +62,10 @@ export default function LandingPage() {
         <div className={styles.headerInner}>
           <Logo />
           <nav className={styles.nav}>
-            <a href="#why" className={styles.navLink}>{t('land.navWhy')}</a>
-            <a href="#different" className={styles.navLink}>{t('diff.eyebrow')}</a>
-            <a href="#explore" className={styles.navLink}>{t('land.navExplore')}</a>
-            <a href="#questions" className={styles.navLink}>{t('faq.eyebrow')}</a>
+            <a href="#why" className={`${styles.navLink} ${styles.anchorLink}`}>{t('land.navWhy')}</a>
+            <a href="#different" className={`${styles.navLink} ${styles.anchorLink}`}>{t('diff.eyebrow')}</a>
+            <a href="#explore" className={`${styles.navLink} ${styles.anchorLink}`}>{t('land.navExplore')}</a>
+            <a href="#questions" className={`${styles.navLink} ${styles.anchorLink}`}>{t('faq.eyebrow')}</a>
             <Link to="/signin" className={styles.navLink}>{t('land.navSignIn')}</Link>
             <LanguageSwitcher />
             <ButtonLink to="/app/board" variant="accent">{t('land.navStart')}</ButtonLink>
@@ -73,6 +75,7 @@ export default function LandingPage() {
 
       <main>
         <Hero data={hero} />
+        <TickerTape />
         <StatsBand data={hero} />
 
         <section className={styles.storySection} id="why">
@@ -120,11 +123,12 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <WorldPulse />
         <Differentiators />
 
         <section className={styles.widgetSection} id="explore">
           <div className={styles.widgetHeader}>
-            <SectionHeading index="02" eyebrow={t('land.insideKicker')} title={t('land.insideTitle')} />
+            <SectionHeading index="03" eyebrow={t('land.insideKicker')} title={t('land.insideTitle')} />
             <span className={styles.widgetStamp}>{t('land.stamp')}</span>
           </div>
           <div className={styles.widgetGrid}>
@@ -200,7 +204,7 @@ export default function LandingPage() {
 
         <section className={styles.section} id="modules">
           <div className={styles.sectionInner}>
-            <SectionHeading index="03" eyebrow={t('land.offerKicker')} title={t('land.offerTitle')} />
+            <SectionHeading index="04" eyebrow={t('land.offerKicker')} title={t('land.offerTitle')} />
             <div className={styles.modulesGrid}>
               {MODULES.map((module, index) => (
                 <Reveal key={module.to} delay={(index % 3) * 90}>

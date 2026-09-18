@@ -1,0 +1,288 @@
+.band {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 104px var(--space-5) 96px;
+}
+
+.stage {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.year {
+  font-family: var(--font-heading);
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  min-width: 3ch;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex: 1;
+  max-width: 560px;
+}
+
+.play {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  flex-shrink: 0;
+  background: var(--color-accent-fill);
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--color-text);
+  font: 500 13px var(--font-body);
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.play:hover:not(:disabled) {
+  background: var(--color-accent);
+}
+
+.play:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.scrub {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--color-accent);
+}
+
+.range {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.mapWrap {
+  position: relative;
+  padding: 26px 22px 18px;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--color-border);
+  stroke-width: 0.25;
+  stroke-dasharray: 1 2;
+}
+
+.equator {
+  stroke: var(--color-border);
+  stroke-width: 0.35;
+}
+
+/* The heat scale. Every band is a token or a mix of two tokens, so the map
+   repaints with the theme. Dim red for calm, white for runaway prices, grey
+   for prices that fell. */
+.b0 {
+  --heat: color-mix(in srgb, var(--color-text-muted) 70%, var(--color-bg));
+}
+
+.b1 {
+  --heat: color-mix(in srgb, var(--color-accent-fill) 38%, var(--color-bg));
+}
+
+.b2 {
+  --heat: color-mix(in srgb, var(--color-accent-fill) 68%, var(--color-bg));
+}
+
+.b3 {
+  --heat: var(--color-accent-fill);
+}
+
+.b4 {
+  --heat: var(--color-accent);
+}
+
+.b5 {
+  --heat: var(--color-accent-soft);
+}
+
+.b6 {
+  --heat: var(--color-text);
+}
+
+.none {
+  --heat: var(--color-surface-2);
+}
+
+/* Colour and size move together between years, so a country heating up is
+   seen swelling as well as brightening. */
+.dot {
+  fill: var(--heat);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 420ms ease, transform 420ms ease;
+}
+
+.dot.b5 {
+  transform: scale(1.3);
+}
+
+.dot.b6 {
+  transform: scale(1.6);
+}
+
+.dot.focus {
+  stroke: var(--color-text);
+  stroke-width: 0.5;
+  transform: scale(1.9);
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.tip {
+  position: absolute;
+  z-index: 2;
+  transform: translate(14px, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-left: 2px solid var(--color-accent);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.tip strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tip span {
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tip em {
+  font-style: normal;
+  font-size: 10.5px;
+  color: var(--color-accent-soft);
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  padding: 16px 22px;
+  border-top: 1px solid var(--color-border);
+}
+
+.caption {
+  margin: 0;
+  flex: 1;
+  min-width: 280px;
+  max-width: 640px;
+  font-size: 14px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--heat);
+}
+
+.note {
+  margin: 0;
+  padding: 12px 22px 16px;
+  border-top: 1px solid var(--color-border);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 760px) {
+  .inner {
+    padding: 72px var(--space-4) 64px;
+  }
+
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .controls {
+    max-width: none;
+  }
+
+  .mapWrap {
+    padding: 16px 10px 12px;
+  }
+
+  /* On a phone the map is a third of its desktop width, and a dot sized for the
+     desktop comes out barely a pixel across. The radius grows to stay visible,
+     at the cost of Europe crowding, which is the honest shape of it anyway. */
+  .dot {
+    r: 2.6px;
+  }
+
+  .foot {
+    padding: 14px 16px;
+  }
+}

@@ -10,6 +10,9 @@ export interface IndicatorPoint {
 export interface WorldBankCountry {
   code: string
   name: string
+  /** Capital city coordinates, as the World Bank publishes them. */
+  lon?: number
+  lat?: number
 }
 
 const API_BASE = 'https://api.worldbank.org/v2'
@@ -24,8 +27,22 @@ export function fetchWorldBankCountries(): Promise<WorldBankCountry[]> {
   countriesPromise = fetch(`${API_BASE}/country?format=json&per_page=400`)
     .then(async (response) => {
       if (!response.ok) throw new Error(`World Bank country list error: ${response.status}`)
-      const payload = (await response.json()) as [unknown, Array<{ id: string; name: string; region?: { id: string } }>]
-      return (payload[1] ?? []).filter((country) => country.id && country.id !== 'NA' && country.region?.id !== 'NA').map((country) => ({ code: country.id, name: country.name }))
+      const payload = (await response.json()) as [
+        unknown,
+        Array<{ id: string; name: string; region?: { id: string }; longitude?: string; latitude?: string }>,
+      ]
+      return (payload[1] ?? [])
+        .filter((country) => country.id && country.id !== 'NA' && country.region?.id !== 'NA')
+        .map((country) => {
+          const lon = Number.parseFloat(country.longitude ?? '')
+          const lat = Number.parseFloat(country.latitude ?? '')
+          return {
+            code: country.id,
+            name: country.name,
+            lon: Number.isFinite(lon) ? lon : undefined,
+            lat: Number.isFinite(lat) ? lat : undefined,
+          }
+        })
     })
     .catch((error) => {
       // Drop the cached rejection so a later visit can retry instead of

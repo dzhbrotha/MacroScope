@@ -192,3 +192,9 @@
 .moduleCard:hover .moduleOpen svg{transform:translateX(3px)}
 .moduleTitle{transition:color 140ms ease}
 .widgetHeader>div:first-child{margin-bottom:0}
+
+/* Five links in Russian do not fit beside the logo below this width and were
+   wrapping onto the mark. The section links go first; signing in stays until
+   the phone layout takes over. */
+.navLink{white-space:nowrap}
+@media (max-width:1120px){.nav .anchorLink{display:none}}

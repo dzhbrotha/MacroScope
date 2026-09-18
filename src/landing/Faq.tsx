@@ -28,7 +28,7 @@ export default function Faq() {
   return (
     <section className={styles.section} id="questions">
       <div className={styles.inner}>
-        <SectionHeading index="04" eyebrow={t('faq.eyebrow')} title={t('faq.title')} />
+        <SectionHeading index="05" eyebrow={t('faq.eyebrow')} title={t('faq.title')} />
 
         <Reveal delay={100} className={styles.list}>
           {QUESTIONS.map((item, index) => {

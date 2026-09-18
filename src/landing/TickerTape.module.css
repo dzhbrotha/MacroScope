@@ -1,0 +1,116 @@
+.tape {
+  display: flex;
+  align-items: stretch;
+  height: 42px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.label {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent-soft);
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+.viewport {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  /* The tape fades in and out at its edges rather than being cut. */
+  mask-image: linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+}
+
+.still {
+  overflow-x: auto;
+  scrollbar-width: none;
+  mask-image: none;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  animation-name: slide;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.still .track {
+  animation: none;
+}
+
+/* Reading an entry stops the tape under the pointer. */
+.viewport:hover .track {
+  animation-play-state: paused;
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+}
+
+.entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: 12.5px;
+  white-space: nowrap;
+  transition: background 120ms ease;
+}
+
+.entry:hover {
+  background: var(--color-surface-2);
+}
+
+.entry:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.code {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.up {
+  color: var(--color-error);
+}
+
+.down {
+  color: var(--color-positive);
+}
+
+@keyframes slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 640px) {
+  .label {
+    display: none;
+  }
+}
