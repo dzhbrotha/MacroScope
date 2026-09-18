@@ -1,0 +1,280 @@
+/* A window onto the product. Drawn with the app's own surfaces and hairlines,
+   so the picture and the thing it advertises are visibly the same object. */
+.frame {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+}
+
+/* A short accent edge on the frame, the one flourish it is allowed. */
+.frame::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 28px;
+  width: 2px;
+  height: 64px;
+  background: var(--color-accent);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 13px var(--font-heading);
+  letter-spacing: -0.03em;
+}
+
+.mark {
+  height: 13px;
+  width: auto;
+  color: var(--color-accent);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+}
+
+.live i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: pulse 2200ms ease-in-out infinite;
+}
+
+.watch {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--color-border);
+  min-height: 38px;
+}
+
+.star {
+  align-self: center;
+  margin: 0 10px 0 14px;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font: 12px var(--font-body);
+  cursor: pointer;
+  position: relative;
+}
+
+.chip::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: transparent;
+  transition: background 200ms ease;
+}
+
+.on {
+  color: var(--color-text);
+}
+
+.on::after {
+  background: var(--color-accent);
+}
+
+.code {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.good {
+  color: var(--color-positive);
+}
+
+.bad {
+  color: var(--color-error);
+}
+
+.panel {
+  padding: 16px 16px 6px;
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.years {
+  font-variant-numeric: tabular-nums;
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  height: 150px;
+  margin-top: 12px;
+  overflow: visible;
+}
+
+.base {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The series draws itself left to right every time the country changes: the
+   svg is keyed by country, so the animation restarts with the data.
+
+   A stroke dash would be the usual way, but a dash measured with pathLength
+   and drawn with a non scaling stroke on a stretched viewBox is counted in two
+   different units, and the line stopped four fifths of the way across. So the
+   whole chart is uncovered by a clip instead, which has no units to disagree. */
+.drawing {
+  clip-path: inset(0 100% 0 0);
+  animation: reveal 1500ms cubic-bezier(0.4, 0, 0.2, 1) 120ms forwards;
+}
+
+.line {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.tax {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 16px 0;
+  padding: 14px 0 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.taxLabel {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent-soft);
+}
+
+.taxValue {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.taxUnit {
+  margin-left: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--color-text-muted);
+}
+
+.taxNote {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 14px;
+}
+
+.dots i {
+  width: 18px;
+  height: 2px;
+  background: var(--color-border);
+  transition: background 300ms ease;
+}
+
+.dots .dotOn {
+  background: var(--color-accent);
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 16px 22px;
+}
+
+.placeholder span {
+  display: block;
+  height: 14px;
+  background: var(--color-surface-2);
+}
+
+.placeholder span:first-child {
+  height: 150px;
+}
+
+.placeholder span:last-child {
+  width: 55%;
+  height: 26px;
+}
+
+@keyframes reveal {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}

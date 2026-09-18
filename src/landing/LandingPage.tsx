@@ -1,28 +1,40 @@
 import { Link } from 'react-router-dom'
-import { Scale, TrendingUp, Briefcase, Gauge, Brain, Database, Zap, Lock } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { ButtonLink } from '../shared/components'
 import { Logo } from '../shared/components'
 import { LanguageSwitcher, useI18n } from '../shared/i18n'
 import type { TranslationKey } from '../shared/i18n'
+import { navItems } from '../app/navItems'
 import ScrollProgress from './ScrollProgress'
 import PulseSpark from './PulseSpark'
 import PulseBars from './PulseBars'
+import Hero from './Hero'
+import StatsBand from './StatsBand'
+import Differentiators from './Differentiators'
+import Faq from './Faq'
+import Closing from './Closing'
+import Reveal from './Reveal'
+import SectionHeading from './SectionHeading'
+import { useHeroData } from './useHeroData'
 import { useLivePulse } from './useLivePulse'
 import styles from './LandingPage.module.css'
 
-const modules: { icon: typeof Scale; title: TranslationKey; text: TranslationKey }[] = [
-  { icon: Scale, title: 'nav.sanctions', text: 'land.mod1' },
-  { icon: TrendingUp, title: 'nav.inflation', text: 'land.mod2' },
-  { icon: Briefcase, title: 'nav.unemployment', text: 'land.mod3' },
-  { icon: Gauge, title: 'nav.quality', text: 'land.mod4' },
-  { icon: Brain, title: 'nav.ai', text: 'land.mod5' },
-]
+// Every module the app has, described in the same words the dashboard uses, so
+// the landing page cannot advertise a module that no longer exists or miss one
+// that was just added.
+const MODULE_TEXT: Record<string, TranslationKey> = {
+  '/app/board': 'dash.board',
+  '/app/sanctions': 'dash.sanctions',
+  '/app/inflation': 'dash.inflation',
+  '/app/unemployment': 'dash.unemployment',
+  '/app/quality-of-life': 'dash.quality',
+  '/app/data-trust': 'dash.trust',
+  '/app/country': 'dash.country',
+  '/app/ai-explainer': 'dash.ai',
+  '/app/property-lab': 'dash.property',
+}
 
-const steps: { icon: typeof Database; title: TranslationKey; text: TranslationKey }[] = [
-  { icon: Database, title: 'land.step1', text: 'land.step1x' },
-  { icon: Zap, title: 'land.step2', text: 'land.step2x' },
-  { icon: Lock, title: 'land.step3', text: 'land.step3x' },
-]
+const MODULES = navItems.filter((item) => item.to in MODULE_TEXT)
 
 const PULSE_LABEL: Record<string, TranslationKey> = {
   inflation: 'ind.inflation',
@@ -39,6 +51,7 @@ const audiences: [TranslationKey, TranslationKey][] = [
 export default function LandingPage() {
   const { t } = useI18n()
   const pulse = useLivePulse()
+  const hero = useHeroData()
 
   return (
     <div>
@@ -48,40 +61,24 @@ export default function LandingPage() {
           <Logo />
           <nav className={styles.nav}>
             <a href="#why" className={styles.navLink}>{t('land.navWhy')}</a>
+            <a href="#different" className={styles.navLink}>{t('diff.eyebrow')}</a>
             <a href="#explore" className={styles.navLink}>{t('land.navExplore')}</a>
-            <a href="#property" className={styles.navLink}>{t('land.navProperty')}</a>
+            <a href="#questions" className={styles.navLink}>{t('faq.eyebrow')}</a>
             <Link to="/signin" className={styles.navLink}>{t('land.navSignIn')}</Link>
             <LanguageSwitcher />
-            <ButtonLink to="/signup" variant="accent">{t('land.navStart')}</ButtonLink>
+            <ButtonLink to="/app/board" variant="accent">{t('land.navStart')}</ButtonLink>
           </nav>
         </div>
       </header>
 
       <main>
-        <section className={`${styles.hero} ${styles.stars}`}>
-          <div className={styles.heroTop}>
-            <p className={styles.kicker}>{t('land.kicker')}</p>
-            <span className={styles.status}><i /> {t('land.status')}</span>
-          </div>
-          <h1 className={styles.heroTitle}>{t('land.heroTitle')}</h1>
-          <p className={styles.heroText}>{t('land.heroText')}</p>
-          <div className={styles.heroActions}>
-            <ButtonLink to="/signup" variant="accent">{t('land.heroEnter')}</ButtonLink>
-            <ButtonLink to="/app/board" variant="secondary">
-              {t('land.heroOpen')}
-            </ButtonLink>
-          </div>
-          <div className={styles.signalRail}>
-            <div><span>{t('land.rail1')}</span><strong>{t('land.rail1v')}</strong></div>
-            <div><span>{t('land.rail2')}</span><strong>{t('nav.country')}</strong></div>
-            <div><span>{t('land.rail3')}</span><strong>{t('land.rail3v')}</strong></div>
-          </div>
-        </section>
+        <Hero data={hero} />
+        <StatsBand data={hero} />
 
         <section className={styles.storySection} id="why">
           <div className={styles.storyVisual}>
             <div className={styles.visualWindow}>
-              <div className={styles.visualTop}><span>{t('land.fieldNote')}</span><span>01—03</span></div>
+              <div className={styles.visualTop}><span>{t('land.fieldNote')}</span><span>01 / 03</span></div>
               <div className={styles.visualTitle}>{t('land.visualTitle')}</div>
               {pulse.history.length > 3 ? (
                 <PulseSpark points={pulse.history} />
@@ -96,37 +93,42 @@ export default function LandingPage() {
           </div>
           <div className={styles.storyCopy}>
             <article>
-              <span className={styles.storyNumber}>01</span>
-              <p className={styles.kicker}>{t('land.problemKicker')}</p>
-              <h2>{t('land.problemTitle')}</h2>
-              <p>{t('land.problemText')}</p>
+              <Reveal>
+                <span className={styles.storyNumber}>01</span>
+                <p className={styles.kicker}>{t('land.problemKicker')}</p>
+                <h2>{t('land.problemTitle')}</h2>
+                <p>{t('land.problemText')}</p>
+              </Reveal>
             </article>
             <article>
-              <span className={styles.storyNumber}>02</span>
-              <p className={styles.kicker}>{t('land.answerKicker')}</p>
-              <h2>{t('land.answerTitle')}</h2>
-              <p>{t('land.answerText')}</p>
+              <Reveal>
+                <span className={styles.storyNumber}>02</span>
+                <p className={styles.kicker}>{t('land.answerKicker')}</p>
+                <h2>{t('land.answerTitle')}</h2>
+                <p>{t('land.answerText')}</p>
+              </Reveal>
             </article>
             <article>
-              <span className={styles.storyNumber}>03</span>
-              <p className={styles.kicker}>{t('land.resultKicker')}</p>
-              <h2>{t('land.resultTitle')}</h2>
-              <p>{t('land.resultText')}</p>
-              <ButtonLink to="/signup" variant="accent">{t('land.resultCta')}</ButtonLink>
+              <Reveal>
+                <span className={styles.storyNumber}>03</span>
+                <p className={styles.kicker}>{t('land.resultKicker')}</p>
+                <h2>{t('land.resultTitle')}</h2>
+                <p>{t('land.resultText')}</p>
+                <ButtonLink to="/app/board" variant="accent">{t('hero.open')}</ButtonLink>
+              </Reveal>
             </article>
           </div>
         </section>
 
+        <Differentiators />
+
         <section className={styles.widgetSection} id="explore">
           <div className={styles.widgetHeader}>
-            <div>
-              <p className={styles.kicker}>{t('land.insideKicker')}</p>
-              <h2 className={styles.sectionTitle}>{t('land.insideTitle')}</h2>
-            </div>
+            <SectionHeading index="02" eyebrow={t('land.insideKicker')} title={t('land.insideTitle')} />
             <span className={styles.widgetStamp}>{t('land.stamp')}</span>
           </div>
           <div className={styles.widgetGrid}>
-            <article className={`${styles.widget} ${styles.widgetWide}`}>
+            <Reveal className={`${styles.widget} ${styles.widgetWide}`}>
               <div className={styles.widgetTop}>
                 <span>{t('land.pulse')}</span>
                 <span className={styles.widgetTag}>
@@ -167,8 +169,8 @@ export default function LandingPage() {
                     })
                   : t('land.pulseNote')}
               </p>
-            </article>
-            <article className={styles.widget}>
+            </Reveal>
+            <Reveal delay={100} className={styles.widget}>
               <div className={styles.widgetTop}>
                 <span>{t('nav.property')}</span>
                 <span className={styles.widgetIcon}>↗</span>
@@ -176,9 +178,9 @@ export default function LandingPage() {
               <strong className={styles.widgetNumber}>$186</strong>
               <span className={styles.widgetLabel}>{t('land.labCashLabel')}</span>
               <div className={styles.miniBar}><i /></div>
-              <a href="/signup">{t('land.labOpen')} →</a>
-            </article>
-            <article className={styles.widget}>
+              <Link to="/app/property-lab">{t('land.labOpen')} →</Link>
+            </Reveal>
+            <Reveal delay={200} className={styles.widget}>
               <div className={styles.widgetTop}>
                 <span>{t('land.pathTitle')}</span>
                 <span className={styles.widgetTag}>{t('land.pathTag')}</span>
@@ -186,37 +188,32 @@ export default function LandingPage() {
               <strong className={styles.widgetNumber}>03 / 10</strong>
               <span className={styles.widgetLabel}>{t('land.pathLabel')}</span>
               <div className={styles.lessonList}><span>NOI</span><span>Cap rate</span><span>DSCR</span></div>
-              <a href="/signup">{t('land.pathStart')} →</a>
-            </article>
-            <article className={`${styles.widget} ${styles.widgetDark}`}>
+              <Link to="/app/property-lab">{t('land.pathStart')} →</Link>
+            </Reveal>
+            <Reveal delay={300} className={`${styles.widget} ${styles.widgetDark}`}>
               <div className={styles.widgetTop}><span>{t('land.nextQuestion')}</span><span>MacroScope</span></div>
               <p>«{t('land.questionQuote')}»</p>
-              <a href="/signup">{t('land.buildScenario')} →</a>
-            </article>
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.statement}>
-            <div>
-              <p className={styles.kicker}>{t('land.whoKicker')}</p>
-              <h2 className={styles.sectionTitle}>{t('land.whoTitle')}</h2>
-            </div>
-            <p>{t('land.whoText')}</p>
+              <Link to="/app/property-lab">{t('land.buildScenario')} →</Link>
+            </Reveal>
           </div>
         </section>
 
         <section className={styles.section} id="modules">
           <div className={styles.sectionInner}>
-            <p className={styles.kicker}>{t('land.offerKicker')}</p>
-            <h2 className={styles.sectionTitle}>{t('land.offerTitle')}</h2>
+            <SectionHeading index="03" eyebrow={t('land.offerKicker')} title={t('land.offerTitle')} />
             <div className={styles.modulesGrid}>
-              {modules.map((module) => (
-                <article key={module.title} className={styles.moduleCard}>
-                  <module.icon className={styles.moduleIcon} size={22} strokeWidth={1.5} />
-                  <h3 className={styles.moduleTitle}>{t(module.title)}</h3>
-                  <p className={styles.moduleText}>{t(module.text)}</p>
-                </article>
+              {MODULES.map((module, index) => (
+                <Reveal key={module.to} delay={(index % 3) * 90}>
+                  <Link to={module.to} className={styles.moduleCard}>
+                    <module.icon className={styles.moduleIcon} size={22} strokeWidth={1.5} />
+                    <h3 className={styles.moduleTitle}>{t(module.label)}</h3>
+                    <p className={styles.moduleText}>{t(MODULE_TEXT[module.to])}</p>
+                    <span className={styles.moduleOpen}>
+                      {t('diff.open')}
+                      <ArrowRight size={13} strokeWidth={2} />
+                    </span>
+                  </Link>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -224,19 +221,19 @@ export default function LandingPage() {
 
         <section className={`${styles.section} ${styles.featureSection}`} id="property">
           <div className={styles.feature}>
-            <div>
+            <Reveal>
               <p className={styles.kicker}>{t('land.propKicker')}</p>
               <h2 className={styles.featureTitle}>{t('land.propTitle')}</h2>
               <p className={styles.featureText}>{t('land.propText')}</p>
-              <ButtonLink to="/signup" variant="accent">{t('land.propCta')}</ButtonLink>
-            </div>
-            <div className={styles.labPreview}>
+              <ButtonLink to="/app/property-lab" variant="accent">{t('land.propCta')}</ButtonLink>
+            </Reveal>
+            <Reveal delay={150} className={styles.labPreview}>
               <span>{t('land.labSample')}</span>
               <strong>{t('land.labScenario')}</strong>
               <div className={styles.previewLine}><span>{t('land.labCash')}</span><b>− $186</b></div>
               <div className={styles.previewLine}><span>DSCR</span><b>0.94x</b></div>
               <div className={styles.previewLine}><span>{t('land.labNote')}</span><b>{t('land.labNoteValue')} →</b></div>
-            </div>
+            </Reveal>
           </div>
         </section>
 
@@ -245,40 +242,18 @@ export default function LandingPage() {
             <p className={styles.kicker}>{t('land.madeFor')}</p>
             <div className={styles.audienceGrid}>
               {audiences.map(([title, text], index) => (
-                <article key={title}>
+                <Reveal key={title} delay={index * 100}>
                   <span className={styles.index}>0{index + 1}</span>
                   <h3 className={styles.moduleTitle}>{t(title)}</h3>
                   <p className={styles.moduleText}>{t(text)}</p>
-                </article>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
 
-        <section className={styles.section}>
-          <div className={styles.sectionInner}>
-            <p className={styles.kicker}>{t('land.approachKicker')}</p>
-            <h2 className={styles.sectionTitle}>{t('land.approachTitle')}</h2>
-            <div className={styles.stepsGrid}>
-              {steps.map((step) => (
-                <div key={step.title}>
-                  <step.icon size={20} strokeWidth={1.5} />
-                  <h3 className={styles.moduleTitle}>{t(step.title)}</h3>
-                  <p className={styles.moduleText}>{t(step.text)}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.ctaInner}>
-            <p className={styles.kicker}>{t('land.nextKicker')}</p>
-            <h2 className={styles.ctaTitle}>{t('land.ctaTitle')}</h2>
-            <p className={styles.ctaText}>{t('land.ctaText')}</p>
-            <ButtonLink to="/signup" variant="accent">{t('land.ctaButton')}</ButtonLink>
-          </div>
-        </section>
+        <Faq />
+        <Closing />
       </main>
 
       <footer className={styles.footer}>

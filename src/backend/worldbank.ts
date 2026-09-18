@@ -13,7 +13,7 @@ export interface WorldBankCountry {
 }
 
 const API_BASE = 'https://api.worldbank.org/v2'
-const FIRST_YEAR = 1990
+export const FIRST_YEAR = 1990
 // Asking up to the current year means new releases appear without a code change.
 const lastYear = () => new Date().getFullYear()
 
@@ -60,6 +60,18 @@ async function readSeries(url: string): Promise<WorldBankRow[]> {
     throw new Error('World Bank API returned an unexpected response')
   }
   return (payload[1] ?? []) as WorldBankRow[]
+}
+
+/** The date the World Bank last refreshed the source, as it reports it. */
+export async function fetchSourceUpdated(indicatorCode: string): Promise<string | null> {
+  const response = await fetch(
+    `${API_BASE}/country/KAZ/indicator/${indicatorCode}?format=json&per_page=1`,
+  )
+  if (!response.ok) return null
+  const payload = (await response.json()) as unknown
+  if (!Array.isArray(payload) || !payload[0]) return null
+  const stamp = (payload[0] as { lastupdated?: unknown }).lastupdated
+  return typeof stamp === 'string' ? stamp : null
 }
 
 export async function fetchIndicatorFromApi(
