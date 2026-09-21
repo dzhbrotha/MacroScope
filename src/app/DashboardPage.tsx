@@ -109,9 +109,17 @@ export default function DashboardPage() {
 
       <div className={styles.grid}>
         {modules.map((module, index) => (
-          <Link key={module.to} to={module.to} className={styles.card}>
+          <Link
+            key={module.to}
+            to={module.to}
+            className={index === 0 ? `${styles.card} ${styles.lead}` : styles.card}
+          >
             <span className={styles.cardHead}>
-              <module.icon className={styles.icon} size={20} strokeWidth={1.5} />
+              <module.icon
+                className={styles.icon}
+                size={index === 0 ? 26 : 20}
+                strokeWidth={1.5}
+              />
               <span className={styles.index}>{String(index + 1).padStart(2, '0')}</span>
             </span>
             <h3 className={styles.title}>{t(module.title)}</h3>
