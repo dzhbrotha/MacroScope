@@ -207,3 +207,14 @@
    the phone layout takes over. */
 .navLink{white-space:nowrap}
 @media (max-width:1120px){.nav .anchorLink{display:none}}
+
+/* Broken symmetry: rows that do not start on the same line, and a preview that
+   hangs lower than the words beside it and runs past the column edge. The hero
+   clips its own overflow, so nothing of this reaches the page scrollbar. */
+@media (min-width: 900px) {
+  .modulesGrid > *:nth-child(even) { transform: translateY(46px) }
+  .modulesGrid { align-items: start; padding-bottom: 46px }
+  .audienceGrid > *:nth-child(2) { transform: translateY(38px) }
+  .audienceGrid > *:nth-child(3) { transform: translateY(14px) }
+  .audienceGrid { align-items: start; padding-bottom: 38px }
+}

@@ -102,6 +102,7 @@ export default function Differentiators() {
           eyebrow={t('diff.eyebrow')}
           title={t('diff.title')}
           text={t('diff.text')}
+          flip
         />
 
         <div className={styles.grid}>

@@ -42,6 +42,19 @@
   animation: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) 150ms both;
 }
 
+@media (min-width: 1100px) {
+  /* The panel hangs below the line of the headline and runs past the column,
+     which the section clips. */
+  .preview {
+    margin-top: 96px;
+    margin-right: -56px;
+  }
+
+  .inner {
+    align-items: start;
+  }
+}
+
 .pill {
   display: inline-flex;
   align-items: center;

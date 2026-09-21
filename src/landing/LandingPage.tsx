@@ -206,7 +206,7 @@ export default function LandingPage() {
 
         <section className={`${styles.section} ${styles.sectionAlt}`} id="modules">
           <div className={styles.sectionInner}>
-            <SectionHeading index="04" eyebrow={t('land.offerKicker')} title={t('land.offerTitle')} />
+            <SectionHeading index="04" eyebrow={t('land.offerKicker')} title={t('land.offerTitle')} flip />
             <div className={styles.modulesGrid}>
               {MODULES.map((module, index) => (
                 <Reveal key={module.to} delay={(index % 3) * 90}>
