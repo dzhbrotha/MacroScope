@@ -159,17 +159,19 @@ export default function WorldPulse() {
   return (
     <section className={styles.band} id="world">
       <div className={styles.inner} ref={seenRef}>
-        <SectionHeading
-          index="01"
-          eyebrow={t('world.eyebrow')}
-          title={
-            world ? t('world.title', { count: world.countries.length }) : t('world.titleIdle')
-          }
-          text={t('world.text', {
-            from: years[0] ?? '',
-            to: years[years.length - 1] ?? '',
-          })}
-        />
+        <div className={styles.intro}>
+          <SectionHeading
+            index="01"
+            eyebrow={t('world.eyebrow')}
+            title={
+              world ? t('world.title', { count: world.countries.length }) : t('world.titleIdle')
+            }
+            text={t('world.text', {
+              from: years[0] ?? '',
+              to: years[years.length - 1] ?? '',
+            })}
+          />
+        </div>
 
         <div className={styles.stage} ref={watchRef}>
           <div className={styles.head}>

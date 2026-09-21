@@ -1,6 +1,6 @@
 .section {
   border-top: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 .inner {

@@ -127,6 +127,7 @@ export default function LandingPage() {
         <Differentiators />
 
         <section className={styles.widgetSection} id="explore">
+          <div className={styles.widgetInner}>
           <div className={styles.widgetHeader}>
             <SectionHeading index="03" eyebrow={t('land.insideKicker')} title={t('land.insideTitle')} />
             <span className={styles.widgetStamp}>{t('land.stamp')}</span>
@@ -200,9 +201,10 @@ export default function LandingPage() {
               <Link to="/app/property-lab">{t('land.buildScenario')} →</Link>
             </Reveal>
           </div>
+          </div>
         </section>
 
-        <section className={styles.section} id="modules">
+        <section className={`${styles.section} ${styles.sectionAlt}`} id="modules">
           <div className={styles.sectionInner}>
             <SectionHeading index="04" eyebrow={t('land.offerKicker')} title={t('land.offerTitle')} />
             <div className={styles.modulesGrid}>
@@ -241,7 +243,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className={styles.section}>
+        <section className={`${styles.section} ${styles.sectionPage}`}>
           <div className={styles.sectionInner}>
             <p className={styles.kicker}>{t('land.madeFor')}</p>
             <div className={styles.audienceGrid}>

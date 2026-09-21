@@ -1,6 +1,7 @@
 .band {
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: var(--color-accent-fill);
+  color: var(--color-text);
 }
 
 .grid {
@@ -14,7 +15,7 @@
 /* Hairlines between the four, never around them: one instrument, four dials. */
 .stat {
   padding: 36px 28px 38px;
-  border-left: 1px solid var(--color-border);
+  border-left: 1px solid color-mix(in srgb, var(--color-text) 28%, transparent);
 }
 
 .stat:first-child {
@@ -25,7 +26,7 @@
 .value {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: clamp(34px, 4.6vw, 50px);
+  font-size: clamp(40px, 5.6vw, 66px);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -37,7 +38,7 @@
   max-width: 220px;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--color-text-muted);
+  color: color-mix(in srgb, var(--color-text) 78%, transparent);
 }
 
 @media (max-width: 860px) {
@@ -56,6 +57,6 @@
   }
 
   .stat:nth-child(n + 3) {
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid color-mix(in srgb, var(--color-text) 28%, transparent);
   }
 }

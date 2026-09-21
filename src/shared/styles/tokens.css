@@ -22,6 +22,8 @@
   --color-accent-soft: #e6a8a8;
 
   /* neutral tints of the background, for surfaces and hairlines */
+  --color-bg-deep: #1a1a1b;
+  --color-bg-black: #141415;
   --color-surface: #29292a;
   --color-surface-2: #313133;
   --color-border: #3c3c3e;
