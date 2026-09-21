@@ -121,7 +121,7 @@
 }
 
 .active svg {
-  color: var(--color-accent-soft);
+  color: var(--color-accent);
   opacity: 1;
 }
 

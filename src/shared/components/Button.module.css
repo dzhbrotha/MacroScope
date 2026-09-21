@@ -35,7 +35,7 @@
 
 .accent {
   background: var(--color-accent-fill);
-  color: var(--color-text);
+  color: var(--color-bg);
 }
 
 .accent:hover:not(:disabled) {

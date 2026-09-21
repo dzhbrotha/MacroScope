@@ -41,5 +41,5 @@
 }
 
 .scale > span:nth-child(2) {
-  color: var(--color-accent-soft);
+  color: var(--color-accent);
 }

@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import { router } from './router'
-import { Aurora } from './shared/components'
 import { AuthProvider } from './app/auth/AuthProvider'
 import { I18nProvider } from './shared/i18n'
 import './index.css'
@@ -25,7 +24,6 @@ const pageFallback = (
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Aurora />
     <I18nProvider>
       <AuthProvider>
         <Suspense fallback={pageFallback}>

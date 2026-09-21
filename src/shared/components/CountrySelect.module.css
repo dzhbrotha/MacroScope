@@ -94,7 +94,7 @@
 }
 
 .selected {
-  color: var(--color-accent-soft);
+  color: var(--color-accent);
   font-weight: 600;
 }
 

@@ -53,7 +53,7 @@
 }
 
 .question:hover .qText {
-  color: var(--color-accent-soft);
+  color: var(--color-accent);
 }
 
 .number {
@@ -74,7 +74,7 @@
 
 .open .chevron {
   transform: rotate(180deg);
-  color: var(--color-accent-soft);
+  color: var(--color-accent);
 }
 
 .answer {
