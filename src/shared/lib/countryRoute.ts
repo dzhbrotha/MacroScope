@@ -10,6 +10,8 @@ const SINGLE = [
   '/app/board',
   '/app/country',
   '/app/data-trust',
+  '/app/demography',
+  '/app/income',
   '/app/inflation',
   '/app/quality-of-life',
   '/app/sanctions',

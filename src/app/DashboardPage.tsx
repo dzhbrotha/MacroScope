@@ -9,6 +9,8 @@ import {
   Globe,
   LayoutGrid,
   ShieldCheck,
+  Users,
+  Wallet,
   ArrowRight,
 } from 'lucide-react'
 import { PageLayout, Skeleton } from '../shared/components'
@@ -29,6 +31,8 @@ const modules: { to: string; icon: typeof Scale; title: TranslationKey; text: Tr
   { to: '/app/unemployment', icon: Briefcase, title: 'nav.unemployment', text: 'dash.unemployment' },
   { to: '/app/quality-of-life', icon: Gauge, title: 'nav.quality', text: 'dash.quality' },
   { to: '/app/data-trust', icon: ShieldCheck, title: 'nav.trust', text: 'dash.trust' },
+  { to: '/app/income', icon: Wallet, title: 'nav.income', text: 'dash.income' },
+  { to: '/app/demography', icon: Users, title: 'nav.demography', text: 'dash.demography' },
   { to: '/app/country', icon: Globe, title: 'nav.country', text: 'dash.country' },
   { to: '/app/ai-explainer', icon: Brain, title: 'nav.ai', text: 'dash.ai' },
   { to: '/app/property-lab', icon: House, title: 'nav.property', text: 'dash.property' },

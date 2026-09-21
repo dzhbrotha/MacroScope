@@ -8,6 +8,14 @@ export const INDICATORS = {
   lifeExpectancy: 'SP.DYN.LE00.IN',
   tradePercentGdp: 'NE.TRD.GNFS.ZS',
   fdiInflows: 'BX.KLT.DINV.WD.GD.ZS',
+  gdpPerCapitaPpp: 'NY.GDP.PCAP.PP.CD',
+  pppFactor: 'PA.NUS.PPP',
+  population: 'SP.POP.TOTL',
+  populationGrowth: 'SP.POP.GROW',
+  urbanShare: 'SP.URB.TOTL.IN.ZS',
+  fertility: 'SP.DYN.TFRT.IN',
+  overSixtyFive: 'SP.POP.65UP.TO.ZS',
+  dependency: 'SP.POP.DPND',
 } as const
 
 // Statistical Performance Indicators: the World Bank's own published measure

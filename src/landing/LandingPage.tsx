@@ -31,6 +31,8 @@ const MODULE_TEXT: Record<string, TranslationKey> = {
   '/app/unemployment': 'dash.unemployment',
   '/app/quality-of-life': 'dash.quality',
   '/app/data-trust': 'dash.trust',
+  '/app/income': 'dash.income',
+  '/app/demography': 'dash.demography',
   '/app/country': 'dash.country',
   '/app/ai-explainer': 'dash.ai',
   '/app/property-lab': 'dash.property',

@@ -1,0 +1,180 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.controls > div:first-child {
+  min-width: 220px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.input {
+  height: 38px;
+  min-width: 180px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  font: 500 15px var(--font-body);
+  padding: 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.headline {
+  padding: var(--space-6) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 2px solid var(--color-accent);
+  border-radius: var(--radius);
+}
+
+.kicker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent-soft);
+}
+
+.big {
+  display: block;
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 3.6vw, 42px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.lead {
+  margin: var(--space-4) 0 0;
+  max-width: 640px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* The rule: every economy a tick on a logarithmic axis, the reader a marker
+   standing on it. On a linear axis all but the richest would pile on the left. */
+.ruleWrap {
+  padding: var(--space-6) 0 var(--space-4);
+}
+
+.rule {
+  position: relative;
+  height: 72px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tick,
+.tickOwn {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: 20px;
+  background: var(--color-border);
+}
+
+.tickOwn {
+  height: 34px;
+  width: 2px;
+  background: var(--color-accent-soft);
+}
+
+.marker {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.marker b {
+  order: 2;
+  display: block;
+  width: 2px;
+  height: 56px;
+  background: var(--color-accent);
+}
+
+.marker em {
+  order: 1;
+  font-style: normal;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+.ruleScale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.neighbours {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}
+
+.colLabel {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--color-text-muted);
+}
+
+.neighbours p {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin: 0 0 8px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 8px;
+}
+
+.neighbours b {
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin: 0 0 var(--space-4);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+  max-width: 720px;
+}
+
+@media (max-width: 640px) {
+  .neighbours {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}

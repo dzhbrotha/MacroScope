@@ -16,6 +16,8 @@ const QualityOfLifePage = lazy(() => import('./app/modules/quality/QualityOfLife
 const CountryProfilePage = lazy(() => import('./app/modules/country/CountryProfilePage'))
 const AiExplainerPage = lazy(() => import('./app/modules/ai/AiExplainerPage'))
 const PropertyLabPage = lazy(() => import('./app/modules/property/PropertyLabPage'))
+const IncomePage = lazy(() => import('./app/modules/income/IncomePage'))
+const DemographyPage = lazy(() => import('./app/modules/demography/DemographyPage'))
 const NotFound = lazy(() => import('./shared/components/NotFound'))
 
 export const router = createBrowserRouter([
@@ -36,6 +38,8 @@ export const router = createBrowserRouter([
       { path: 'unemployment', element: <UnemploymentPage /> },
       { path: 'quality-of-life', element: <QualityOfLifePage /> },
       { path: 'country', element: <CountryProfilePage /> },
+      { path: 'income', element: <IncomePage /> },
+      { path: 'demography', element: <DemographyPage /> },
       {
         // The explainer keeps a question history against the user, so it alone
         // still needs a session.
