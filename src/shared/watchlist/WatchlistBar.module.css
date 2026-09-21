@@ -23,7 +23,7 @@
 }
 
 .kicker svg {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .empty {
@@ -123,7 +123,7 @@
 }
 
 .pick:hover .name {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .unpin {
@@ -142,7 +142,7 @@
 }
 
 .unpin:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .pick:focus-visible,

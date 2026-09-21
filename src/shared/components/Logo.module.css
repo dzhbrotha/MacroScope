@@ -10,7 +10,7 @@
   height: 20px;
   width: auto;
   flex-shrink: 0;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
   overflow: visible;
 }
 

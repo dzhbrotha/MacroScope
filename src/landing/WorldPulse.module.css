@@ -25,9 +25,9 @@
 }
 
 .year {
-  font-family: var(--font-display);
-  font-size: clamp(44px, 6.4vw, 72px);
-  font-weight: 400;
+  font-family: var(--font-heading);
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
@@ -52,7 +52,7 @@
   background: var(--color-accent-fill);
   border: 0;
   border-radius: var(--radius);
-  color: var(--color-bg);
+  color: var(--color-text);
   font: 500 13px var(--font-body);
   cursor: pointer;
   transition: background 140ms ease;
@@ -104,23 +104,23 @@
   stroke-width: 0.35;
 }
 
-/* The heat scale, read on paper: calm is pale and runaway prices are nearly
-   black. Every band is a brand value or a mix of one with the page, so the map
-   repaints with the theme. Prices that fell are grey rather than red. */
+/* The heat scale. Every band is a token or a mix of two tokens, so the map
+   repaints with the theme. Dim red for calm, white for runaway prices, grey
+   for prices that fell. */
 .b0 {
-  --heat: color-mix(in srgb, var(--color-text-muted) 55%, var(--color-bg));
+  --heat: color-mix(in srgb, var(--color-text-muted) 70%, var(--color-bg));
 }
 
 .b1 {
-  --heat: var(--color-accent-tint);
+  --heat: color-mix(in srgb, var(--color-accent-fill) 38%, var(--color-bg));
 }
 
 .b2 {
-  --heat: color-mix(in srgb, var(--color-accent-soft) 70%, var(--color-bg));
+  --heat: color-mix(in srgb, var(--color-accent-fill) 68%, var(--color-bg));
 }
 
 .b3 {
-  --heat: var(--color-accent-soft);
+  --heat: var(--color-accent-fill);
 }
 
 .b4 {
@@ -128,7 +128,7 @@
 }
 
 .b5 {
-  --heat: var(--color-accent-deep);
+  --heat: var(--color-accent-soft);
 }
 
 .b6 {
@@ -138,7 +138,6 @@
 .none {
   --heat: var(--color-surface-2);
 }
-
 
 /* Colour and size move together between years, so a country heating up is
    seen swelling as well as brightening. */
@@ -201,7 +200,7 @@
 .tip em {
   font-style: normal;
   font-size: 10.5px;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .foot {

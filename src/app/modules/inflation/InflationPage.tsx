@@ -1,5 +1,4 @@
 import { useMemo, useRef } from 'react'
-import { CHART } from '../../../shared/charts/chartStyle'
 import {
   Button,
   Card,
@@ -124,7 +123,7 @@ export default function InflationPage() {
       await downloadChartPng(
         chartHolder.current,
         `macroscope-${countryCode}-inflation.png`,
-        CHART.bg,
+        '#29292a',
       )
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)

@@ -1,5 +1,4 @@
 import { useRef } from 'react'
-import { CHART } from '../../../shared/charts/chartStyle'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import {
   Button,
@@ -86,7 +85,7 @@ export default function SanctionsPage() {
       await downloadChartPng(
         holders.current[index],
         `macroscope-${country}-${CHART_CONFIG[index].indicator}.png`,
-        CHART.bg,
+        '#29292a',
       )
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)

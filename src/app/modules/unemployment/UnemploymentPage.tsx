@@ -17,7 +17,7 @@ import { INDICATORS } from '../../../backend/constants'
 import { useCountries } from '../../../backend/CountriesProvider'
 import type { IndicatorPoint } from '../../../backend/worldbank'
 import MultiLineChart from '../../../shared/charts/MultiLineChart'
-import { CHART, SERIES_COLORS } from '../../../shared/charts/chartStyle'
+import { SERIES_COLORS } from '../../../shared/charts/chartStyle'
 import ChartControls from '../../../shared/charts/ChartControls'
 import { applyView, isRange, isUnits, startYearOf, unitFor } from '../../../shared/charts/transform'
 import { downloadChartPng, downloadCsv } from '../../../shared/lib/exportData'
@@ -98,7 +98,7 @@ export default function UnemploymentPage() {
 
   async function exportPng() {
     try {
-      await downloadChartPng(chartHolder.current, 'macroscope-unemployment.png', CHART.bg)
+      await downloadChartPng(chartHolder.current, 'macroscope-unemployment.png', '#29292a')
     } catch (exportError) {
       console.warn('Chart export failed:', exportError)
     }

@@ -19,9 +19,9 @@
 }
 
 .year {
-  font-family: var(--font-display);
-  font-size: clamp(38px, 6.4vw, 58px);
-  font-weight: 400;
+  font-family: var(--font-heading);
+  font-size: clamp(34px, 6vw, 52px);
+  font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -31,7 +31,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .controls {
@@ -69,8 +69,6 @@
 .primary {
   background: var(--color-accent-fill);
   border-color: var(--color-accent-fill);
-  /* Inherits ink from .control, which on the deep red would be 1.9 to 1. */
-  color: var(--color-bg);
   padding: 0 var(--space-4);
 }
 

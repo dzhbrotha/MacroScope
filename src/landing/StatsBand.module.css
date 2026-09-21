@@ -24,9 +24,9 @@
 
 .value {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(40px, 5.4vw, 64px);
-  font-weight: 400;
+  font-family: var(--font-heading);
+  font-size: clamp(34px, 4.6vw, 50px);
+  font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;

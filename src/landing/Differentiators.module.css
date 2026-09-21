@@ -96,7 +96,7 @@
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .open svg {

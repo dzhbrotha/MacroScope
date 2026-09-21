@@ -68,7 +68,7 @@
 
 .compareValue {
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .deltaUp {

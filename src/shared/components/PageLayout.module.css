@@ -34,10 +34,9 @@
 
 .title {
   margin: 0;
-  font-size: clamp(34px, 4.4vw, 52px);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-size: clamp(28px, 3.2vw, 38px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
 
 /* A short accent rule in front of the title. It marks the start of the page

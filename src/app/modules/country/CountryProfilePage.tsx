@@ -18,7 +18,7 @@ import { useCountries } from '../../../backend/CountriesProvider'
 import type { IndicatorPoint } from '../../../backend/worldbank'
 import IndicatorLineChart from '../../../shared/charts/IndicatorLineChart'
 import MultiLineChart from '../../../shared/charts/MultiLineChart'
-import { CHART, SERIES_COLORS } from '../../../shared/charts/chartStyle'
+import { SERIES_COLORS } from '../../../shared/charts/chartStyle'
 import ChartControls from '../../../shared/charts/ChartControls'
 import { PinButton } from '../../../shared/watchlist'
 import { applyView, startYearOf, unitFor } from '../../../shared/charts/transform'
@@ -121,7 +121,7 @@ function ChartCard({ title, primary, secondary, unit, fileBase }: ChartCardProps
 
   async function exportPng() {
     try {
-      await downloadChartPng(holder.current, `${fileBase}.png`, CHART.bg)
+      await downloadChartPng(holder.current, `${fileBase}.png`, '#29292a')
     } catch (error) {
       console.warn('Chart export failed:', error)
     }

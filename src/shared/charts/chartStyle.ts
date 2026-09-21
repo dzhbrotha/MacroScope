@@ -21,17 +21,16 @@ export const CHART = {
   bg: token('--color-bg', '#222223'),
   text: token('--color-text', '#fefefe'),
   positive: token('--color-positive', '#e6a8a8'),
-  deep: token('--color-accent-deep', '#8a1f22'),
   error: token('--color-error', '#d5575e'),
 } as const
 
-// Distinguishable line colors for multi country charts, red family on paper.
+// Distinguishable line colors for multi country charts, red family.
 export const SERIES_COLORS = [
   CHART.accent,
   CHART.accentSoft,
   CHART.text,
   CHART.axis,
-  CHART.deep,
+  CHART.accentFill,
 ] as const
 
 export const TOOLTIP_STYLE = {

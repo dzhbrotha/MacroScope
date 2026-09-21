@@ -48,7 +48,7 @@
 
 .on {
   background: var(--color-accent-fill);
-  color: var(--color-bg);
+  color: var(--color-text);
 }
 
 .on:hover {

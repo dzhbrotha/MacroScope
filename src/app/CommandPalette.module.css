@@ -110,7 +110,7 @@
 }
 
 .pinned {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .code {
@@ -126,7 +126,7 @@
 }
 
 .on .enter {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .empty {

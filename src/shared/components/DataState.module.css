@@ -15,7 +15,7 @@
 }
 
 .spinner {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
   animation: spin 900ms linear infinite;
 }
 

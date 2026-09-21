@@ -31,9 +31,9 @@
 
 .score {
   display: block;
-  font-family: var(--font-display);
-  font-size: clamp(44px, 7.4vw, 68px);
-  font-weight: 400;
+  font-family: var(--font-heading);
+  font-size: clamp(38px, 7vw, 58px);
+  font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.05;
   font-variant-numeric: tabular-nums;
@@ -123,7 +123,7 @@
 }
 
 .middling {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .weak {

@@ -9,12 +9,12 @@
 }
 
 .countryLink:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .score {
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .note {
@@ -35,7 +35,7 @@
   font-size: 40px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .detailLabel {
@@ -204,7 +204,7 @@
 }
 
 .auditOver {
-  color: var(--color-accent);
+  color: var(--color-accent-soft);
 }
 
 .auditUnder {
