@@ -1,4 +1,4 @@
-import Reveal from './Reveal'
+import Reveal from '../shared/components/Reveal'
 import styles from './SectionHeading.module.css'
 
 // Every section opens the same way: a numbered eyebrow on a short rule, then

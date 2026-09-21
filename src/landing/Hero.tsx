@@ -2,6 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check, Database, Languages, Unlock } from 'lucide-react'
 import { useI18n } from '../shared/i18n'
+import { usePrefersReducedMotion, useStartedHidden } from '../shared/motion'
 import HeroPreview from './HeroPreview'
 import type { HeroData } from './useHeroData'
 import styles from './Hero.module.css'
@@ -58,13 +59,22 @@ function formatUpdated(stamp: string, lang: string): string {
 
 export default function Hero({ data }: { data: HeroData }) {
   const { t, lang } = useI18n()
+  // The opening screen rises into place, but never at the cost of being there:
+  // a page opened in a background tab, or drawn by a prerenderer, runs no
+  // animation frames, and an entrance that fills backwards would leave the
+  // whole hero invisible. Those pages are simply drawn finished.
+  // Both hooks run every render, whatever the first one says: a conditional
+  // call would change the hook order the moment the system setting flipped.
+  const reduced = usePrefersReducedMotion()
+  const startedHidden = useStartedHidden()
+  const still = reduced || startedHidden
 
   return (
     <section className={styles.hero}>
       <GraphPaper />
 
       <div className={styles.inner}>
-        <div className={styles.copy}>
+        <div className={still ? undefined : styles.copy}>
           {/* The pill states a fact the page just checked: the date the World
               Bank last refreshed its database. That is what live means here. */}
           <p className={styles.pill}>
@@ -107,7 +117,7 @@ export default function Hero({ data }: { data: HeroData }) {
           </ul>
         </div>
 
-        <div className={styles.preview}>
+        <div className={still ? undefined : styles.preview}>
           <HeroPreview data={data} />
         </div>
       </div>

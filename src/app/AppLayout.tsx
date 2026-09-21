@@ -58,6 +58,8 @@ export default function AppLayout() {
               <kbd className={styles.shortcut}>{shortcutLabel()}</kbd>
             </button>
 
+            <p className={styles.section}>{t('nav.section')}</p>
+
             <nav className={styles.nav} id="app-nav">
               {navItems.map((item) => (
                 <NavLink
@@ -76,6 +78,7 @@ export default function AppLayout() {
             </nav>
 
             <div className={styles.bottom}>
+              <p className={styles.source}>{t('land.footer')}</p>
               <LanguageSwitcher />
               {session ? (
                 <>

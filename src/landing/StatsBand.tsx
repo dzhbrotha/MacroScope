@@ -3,7 +3,7 @@ import { buildScenarios } from '../app/modules/quality/audit'
 import { navItems } from '../app/navItems'
 import { useI18n } from '../shared/i18n'
 import type { TranslationKey } from '../shared/i18n'
-import { useCountUp, useSeenOnce } from './motion'
+import { useCountUp, useSeenOnce } from '../shared/motion'
 import type { HeroData } from './useHeroData'
 import styles from './StatsBand.module.css'
 

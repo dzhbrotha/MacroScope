@@ -3,7 +3,7 @@ import { ArrowDownRight, ArrowUpRight, Star } from 'lucide-react'
 import { LogoMark } from '../shared/components/Logo'
 import { COUNTRY_NAMES_RU, countryName } from '../backend/constants'
 import { pluralKey, useI18n } from '../shared/i18n'
-import { useCountUp, usePrefersReducedMotion, useWatched } from './motion'
+import { useCountUp, usePrefersReducedMotion, useWatched } from '../shared/motion'
 import type { HeroData } from './useHeroData'
 import styles from './HeroPreview.module.css'
 

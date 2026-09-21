@@ -89,3 +89,31 @@ td {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* The same squared paper the landing opens on, laid under the whole product so
+   the site and the app read as one surface. It sits behind everything: the
+   aurora paints over it, and every panel is opaque on top of both. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M32 0H0v32' fill='none' stroke='%23313133' stroke-width='1'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* An anchor should not land under the sticky header. */
+:target {
+  scroll-margin-top: 96px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

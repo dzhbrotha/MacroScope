@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { useI18n } from '../shared/i18n'
 import type { TranslationKey } from '../shared/i18n'
-import Reveal from './Reveal'
+import Reveal from '../shared/components/Reveal'
 import SectionHeading from './SectionHeading'
 import styles from './Faq.module.css'
 

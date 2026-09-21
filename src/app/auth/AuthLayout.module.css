@@ -1,37 +1,51 @@
 .page {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-5);
-  padding: var(--space-5);
-  background: var(--color-bg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
 }
 
-.wordmark {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-  text-decoration: none;
+.formSide {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6) var(--space-5);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 .card {
   width: 100%;
   max-width: 400px;
-  border: 1px solid var(--color-border);
-  border-radius: 0;
-  padding: var(--space-6);
-  background: var(--color-surface);
+  margin: auto;
+  padding: var(--space-6) 0;
+}
+
+/* Balances the header so the form sits on the optical centre rather than
+   being pushed down by it. */
+.spacer {
+  display: block;
+  height: 38px;
 }
 
 .title {
-  margin: 0 0 var(--space-5);
-  font-size: 22px;
+  margin: 0 0 var(--space-6);
+  font-size: 30px;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+}
+
+.title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 0.68em;
+  margin-right: 13px;
+  background: var(--color-accent);
+  vertical-align: baseline;
 }
 
 .form {
@@ -50,12 +64,13 @@
   font-size: 14px;
   line-height: 1.5;
   border: 1px solid var(--color-border);
+  border-left: 2px solid var(--color-accent);
   border-radius: var(--radius);
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
 }
 
 .footer {
-  margin: 0;
+  margin: var(--space-5) 0 0;
   font-size: 14px;
   color: var(--color-text-muted);
 }
@@ -63,4 +78,134 @@
 .footer a {
   color: var(--color-accent-soft);
   text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* The panel carries the one message this screen owes a first time visitor. */
+.panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-accent-fill);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+}
+
+.watermark {
+  position: absolute;
+  right: -60px;
+  top: -40px;
+  width: 420px;
+  height: auto;
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 1.2;
+  opacity: 0.09;
+  pointer-events: none;
+}
+
+.panelInner {
+  position: relative;
+  padding: var(--space-8) var(--space-7);
+  max-width: 420px;
+}
+
+.panelKicker {
+  margin: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+}
+
+.panelTitle {
+  margin: var(--space-4) 0 0;
+  font-family: var(--font-heading);
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.panelText {
+  margin: var(--space-4) 0 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--color-text) 82%, transparent);
+}
+
+.chips {
+  list-style: none;
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 35%, transparent);
+  font-size: 12px;
+}
+
+.panelLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: var(--space-6);
+  height: 44px;
+  padding: 0 20px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  border-radius: var(--radius);
+  font: 500 14px var(--font-body);
+  text-decoration: none;
+  transition: background 140ms ease;
+}
+
+.panelLink:hover {
+  background: var(--color-accent-soft);
+}
+
+.panelLink svg {
+  transition: transform 160ms ease;
+}
+
+.panelLink:hover svg {
+  transform: translateX(3px);
+}
+
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    order: -1;
+  }
+
+  .panelInner {
+    padding: var(--space-6) var(--space-5);
+    max-width: none;
+  }
+
+  .watermark {
+    width: 240px;
+    right: -70px;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .formSide {
+    padding: var(--space-5) var(--space-4) var(--space-7);
+  }
 }

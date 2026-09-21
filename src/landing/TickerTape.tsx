@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { useI18n } from '../shared/i18n'
-import { usePrefersReducedMotion } from './motion'
+import { usePrefersReducedMotion } from '../shared/motion'
 import { useWorldInflation } from './worldInflation'
 import styles from './TickerTape.module.css'
 

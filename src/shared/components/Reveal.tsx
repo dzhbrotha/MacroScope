@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { usePrefersReducedMotion, useSeenOnce, useStartedHidden } from './motion'
+import { usePrefersReducedMotion, useSeenOnce, useStartedHidden } from '../motion'
 import styles from './Reveal.module.css'
 
 /**

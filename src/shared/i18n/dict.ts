@@ -59,6 +59,7 @@ export const en = {
   'cmd.hint': 'Enter opens, Tab pins a country, Esc closes',
 
   'nav.dashboard': 'Dashboard',
+  'nav.section': 'Modules',
   'nav.board': 'Board',
   'nav.signIn': 'Sign in',
   'nav.guestHint': 'Reading without an account. One is needed only to keep your questions to the AI explainer.',
@@ -72,6 +73,9 @@ export const en = {
   'nav.signOut': 'Sign out',
 
   'auth.signIn': 'Sign in',
+  'auth.panelKicker': 'An account is optional',
+  'auth.panelTitle': 'You do not need an account to read the data.',
+  'auth.panelText': 'An account keeps your question history in the AI explainer. Every other module is already open, and so is the source behind every figure.',
   'auth.signUp': 'Create account',
   'auth.email': 'Email',
   'auth.password': 'Password',
@@ -512,6 +516,7 @@ export const ru: Record<TranslationKey, string> = {
   'cmd.hint': 'Enter открыть, Tab закрепить страну, Esc закрыть',
 
   'nav.dashboard': 'Обзор',
+  'nav.section': 'Модули',
   'nav.board': 'Мультиграфик',
   'nav.signIn': 'Войти',
   'nav.guestHint': 'Читаешь без аккаунта. Он нужен только чтобы хранить вопросы к AI.',
@@ -525,6 +530,9 @@ export const ru: Record<TranslationKey, string> = {
   'nav.signOut': 'Выйти',
 
   'auth.signIn': 'Вход',
+  'auth.panelKicker': 'Аккаунт необязателен',
+  'auth.panelTitle': 'Чтобы читать данные, аккаунт не нужен.',
+  'auth.panelText': 'Аккаунт хранит историю вопросов в объяснениях от ИИ. Все остальные модули и так открыты, как и источник за каждой цифрой.',
   'auth.signUp': 'Регистрация',
   'auth.email': 'Почта',
   'auth.password': 'Пароль',
